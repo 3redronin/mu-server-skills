@@ -2,6 +2,7 @@
 name: mu-server-get-started
 description: >-
   Create or adapt a Java application that directly embeds mu-server: add io.muserver:mu-server to Maven or Gradle, create the first route, serve static resources, and verify the app. Use for Mu Server, mu-server, muserver, io.muserver, or its lightweight Java HTTP handler API.
+license: MIT
 ---
 
 # Get started with mu-server

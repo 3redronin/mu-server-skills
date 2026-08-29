@@ -2,6 +2,7 @@
 name: mu-server-swagger
 description: >-
   Use when a Mu Server Jakarta REST application needs Swagger Core v3 annotations from io.swagger.v3.oas.annotations, the io.muserver:mu-swagger or MuOpenApiResourceBuilder integration, help diagnosing why those annotations are absent from its generated document, or a Swagger UI hosted with Mu Server 3's WebJar handler. Integrates annotation metadata into OpenAPI JSON and YAML and connects either Mu OpenAPI generator to Swagger UI while preserving resource registration.
+license: MIT
 ---
 
 # Use Swagger annotations and Swagger UI with Mu Server

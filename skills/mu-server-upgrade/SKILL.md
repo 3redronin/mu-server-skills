@@ -2,6 +2,7 @@
 name: mu-server-upgrade
 description: >-
   Use when upgrading an application's io.muserver:mu-server dependency, planning a Mu Server major-version migration, or investigating a regression after a version change. Covers exact changelog analysis, dependency and Java compatibility, the 1.x-to-2.x javax-to-jakarta transition, the 2.x-to-3.x platform and behavior changes, and focused verification.
+license: MIT
 ---
 
 # Upgrade a Mu Server application

@@ -62,3 +62,7 @@ The agent can select the matching skill automatically; supported harnesses also 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for repository structure, authoring conventions, validation, and evaluations.
+
+## License
+
+These skills are available under the [MIT License](LICENSE), matching mu-server.

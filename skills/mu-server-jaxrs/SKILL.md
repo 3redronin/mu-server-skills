@@ -2,6 +2,7 @@
 name: mu-server-jaxrs
 description: >-
   Use when creating, changing, upgrading, or troubleshooting application code that hosts Jakarta REST/JAX-RS APIs with Mu Server 2.x or 3.x. Covers projects that combine io.muserver with jakarta.ws.rs resources and need RestHandlerBuilder, Application or SeBootstrap setup, singleton lifecycle, provider registration, filters, readers or writers, exception mapping, CORS, OpenAPI, or HTTP verification.
+license: MIT
 ---
 
 # Use Jakarta REST with mu-server

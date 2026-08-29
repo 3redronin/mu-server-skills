@@ -2,6 +2,7 @@
 name: mu-server-murp
 description: >-
   Use when adding, configuring, troubleshooting, or testing the io.muserver:murp HTTP reverse-proxy handler in a Mu Server application. Covers ReverseProxyBuilder, UriMapper routing and fall-through, upstream TLS and timeouts, client certificates and mTLS on either proxy leg, Host/Forwarded/Via policy, streaming listeners, interceptors, and upstream 502 or 504 failures.
+license: MIT
 ---
 
 # Add a Murp reverse proxy to Mu Server
