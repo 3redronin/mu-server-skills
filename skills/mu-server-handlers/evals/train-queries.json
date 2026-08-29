@@ -1,0 +1,50 @@
+[
+  {
+    "query": "My first MuHandler adds a user attribute and returns false, but the endpoint after it never sees the right state. Fix the direct handler order and test both auth branches.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add direct Mu Server routes for GET /orders/{id} and POST /orders, with a digits-only path param and no JAX-RS.",
+    "should_trigger": true
+  },
+  {
+    "query": "Scope these existing handlers under /api/v2 with ContextHandlerBuilder and verify contextPath, relativePath, and the /api/v2 trailing-slash redirect.",
+    "should_trigger": true
+  },
+  {
+    "query": "Build a synchronous mu-server form handler that reads repeated values, a request header, and a cookie, then sets status, content type, and a response cookie.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why does returning false after response.write cause duplicate response errors in my muserver filter chain? Patch it and add a regression test.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review our MuServerBuilder.withExceptionHandler and response completion listener: distinguish errors before and after the direct response starts.",
+    "should_trigger": true
+  },
+  {
+    "query": "This folder is empty. Bootstrap the smallest Mu Server Maven hello-world and serve an index.html from resources.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add @GET /orders/{id} to this jakarta.ws.rs resource and register a ProblemDetailsExceptionMapper on RestHandlerBuilder.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure Murp's UriMapper so /api requests proxy upstream and null mappings fall through to local handlers.",
+    "should_trigger": false
+  },
+  {
+    "query": "Stream a 5GB upload asynchronously with MuRequest.handleAsync and backpressure, then publish progress over SSE.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade this whole mu-server 2.4.1 application to Mu Server 3 and audit every JAX-RS provider and dependency.",
+    "should_trigger": false
+  },
+  {
+    "query": "In the mu-server library repository, fix ContextHandler's URI parser and prove wire compatibility with HTTP/2 tests.",
+    "should_trigger": false
+  }
+]

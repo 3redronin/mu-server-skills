@@ -1,0 +1,48 @@
+{
+  "skill_name": "mu-server-handlers",
+  "evals": [
+    {
+      "id": "context-auth-routing",
+      "prompt": "Extend this existing Maven Java 17 Mu Server application without adding JAX-RS. Under /api, add a direct-handler auth guard that accepts exactly `Authorization: Bearer demo`, stores the user `daniel` as a request attribute, and otherwise returns a plain-text 401 with a Bearer challenge. Add GET /api/orders/{id} where id is digits only; return `daniel:{id}` as text. Keep the existing /health handler public and keep the existing fallback. Build it and verify allowed, rejected, malformed-id, trailing-slash, bare-context, and health requests.",
+      "expected_output": "An ordered ContextHandler-based direct handler chain whose scoped guard falls through only after attaching request state, whose matching route consumes the request, and whose observable routing and context behavior are verified over HTTP.",
+      "files": [],
+      "assertions": [
+        "The implementation uses MuHandler/RouteHandler and ContextHandlerBuilder rather than Jakarta REST annotations or RestHandlerBuilder, and preserves the existing server, /health route, and fallback.",
+        "The auth guard is inside the /api context, returns false only after setting a request attribute, and returns true after writing the complete 401 response; rejected requests cannot reach the order handler.",
+        "The rejected response includes a WWW-Authenticate header with a Bearer challenge as required for a 401 response.",
+        "GET /api/orders/42 with the accepted Authorization header returns 200, text/plain with an explicit UTF-8-compatible content type, and body daniel:42.",
+        "The route uses a numeric path-template constraint; a non-numeric id does not invoke it, while /api/orders/42/ follows the direct router's established trailing-slash match.",
+        "The verification checks /api without following redirects and observes a 302 to /api/ with no lost query string when one is supplied.",
+        "GET /health remains public and unchanged, and the application's existing fallback still handles a non-matching path in its original order."
+      ]
+    },
+    {
+      "id": "synchronous-request-response",
+      "prompt": "In our existing direct-handler Mu Server app, add POST /submit for application/x-www-form-urlencoded only. It needs the first `name`, all repeated `tag` values, X-Trace, and the optional `session` cookie. Return 415 for other content types. On success return 201 text/plain with one line containing those values and set a secure HttpOnly SameSite=Lax cookie named `seen` scoped to /submit. Do not buffer/read the request body more than once. Add HTTP tests for `name=Blue+Green&tag=a&tag=b`, missing fields, the wrong content type, and the response cookie.",
+      "expected_output": "A synchronous direct POST route that validates media type before consuming form data once, handles repeated and missing values deliberately, and creates the requested response and cookie before commitment.",
+      "files": [],
+      "assertions": [
+        "The route uses request.form() only after checking for application/x-www-form-urlencoded and does not also call readBodyAsString(), inputStream(), or a second body parser.",
+        "The successful request returns 201 with an explicit text/plain UTF-8-compatible Content-Type and demonstrates that Blue+Green form-decodes to Blue Green while both tag values remain available in request order.",
+        "X-Trace is read through request.headers(), the session value through request.cookie(), and missing inputs are handled according to explicit application logic rather than causing an unchecked null failure.",
+        "A non-form request returns 415 without attempting form parsing and without reaching the success response.",
+        "The `seen` Set-Cookie value is created before the body is committed and includes Secure, HttpOnly, SameSite=Lax, and Path=/submit.",
+        "Tests assert status, Content-Type, exact success body, 415 behavior, and cookie attributes over HTTP."
+      ]
+    },
+    {
+      "id": "diagnose-chain-and-errors",
+      "prompt": "Diagnose and fix this Mu Server direct-handler regression. A metrics MuHandler calls response.sendChunk before returning false; an auth MuHandler writes `nope` for a missing token but also returns false; a generic GET /items/{value} route is registered before GET /items/{id : [0-9]+}; and the exception handler always tries to replace the response. Symptoms are duplicate-write exceptions, the numeric route never running, and truncated responses on late failures. Preserve direct handlers (no JAX-RS and no async rewrite), make metrics completion-based, and add focused tests including the no-route 404 and a failure both before and after response commitment.",
+      "expected_output": "A corrected ordered direct-handler design that moves post-response metrics to a completion listener, stops rejected requests, orders overlapping routes intentionally, and distinguishes replaceable pre-commit errors from unrecoverable post-commit failures.",
+      "files": [],
+      "assertions": [
+        "The metrics handler no longer sends response data before fall-through; completion-time metrics use addResponseCompleteListener and interpret completedSuccessfully as transport completion rather than HTTP success.",
+        "The auth rejection writes its status, content type, and body and returns true, while the allowed branch returns false without committing the response.",
+        "The constrained numeric route is registered before the generic overlapping route, with an explanation that direct routes use first-match registration order and a matched RouteHandler always stops the chain.",
+        "The custom exception handler checks hasStartedSendingData; before commitment it explicitly sets the intended error status, creates a complete response, and returns true, while after commitment it returns false so default handling terminates the incomplete response.",
+        "A request for which all MuHandlers return false is tested as the default 404, not as an empty 200 or a synthetic 405.",
+        "Focused tests cover route selection, rejected-request isolation, a replaceable pre-commit exception, and a post-commit exception where the original status may already be visible but the body/stream is incomplete."
+      ]
+    }
+  ]
+}

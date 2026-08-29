@@ -1,0 +1,34 @@
+[
+  {
+    "query": "hey, these plain io.muserver handlers overlap and the catch-all wins before my numeric route. Can you reorder/fix them and check wrong methods too?",
+    "should_trigger": true
+  },
+  {
+    "query": "Implement POST /echo with the direct RouteHandler API. It should read a small UTF-8 body once and return a precise status/header/body contract.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our /admin Mu Server context needs an early authorization handler that stops unauthorized calls but passes a request-scoped principal to later routes.",
+    "should_trigger": true
+  },
+  {
+    "query": "A custom muserver error page works until response.sendChunk has run. Diagnose commitment behavior and test the completion listener result.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a new lightweight Mu Server Gradle starter with /hello and static files; I have no project yet.",
+    "should_trigger": false
+  },
+  {
+    "query": "My @PathParam and @QueryParam values in a Mu Server Jakarta REST resource decode differently after upgrading; review the JAX-RS migration.",
+    "should_trigger": false
+  },
+  {
+    "query": "Make the Murp reverse proxy preserve Forwarded and Via headers while a local health handler still falls through correctly.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use Mu Server's async request body reader and AsyncHandle.write callbacks so no handler thread blocks.",
+    "should_trigger": false
+  }
+]
