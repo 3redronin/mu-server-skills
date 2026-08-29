@@ -44,6 +44,20 @@
         "It identifies /openapi.json and /openapi.yaml as generated-document endpoints and verifies status, media type, parseability, annotated content, and an unchanged application endpoint.",
         "It does not add Swagger UI because the UI is already separate, and treats CORS, JSON body providers, and authentication as independent runtime concerns."
       ]
+    },
+    {
+      "id": "host-swagger-ui-webjar",
+      "prompt": "This Mu Server 3 service already exposes the intended OpenAPI document at /openapi.json. Host Swagger UI in the same application with Mu Server's WebJar support. Give the Swagger UI group ID and artifact ID, use the current stable release, mount the UI at /api-docs, ensure it loads this service's document rather than the bundled example, and explain version resolution and CORS. Do not replace the existing OpenAPI generator or add Swagger annotations.",
+      "expected_output": "A same-origin Swagger UI hosted from the org.webjars:swagger-ui dependency under /api-docs, with an application initializer that selects /openapi.json and no change to the existing document generator.",
+      "files": [],
+      "assertions": [
+        "It adds an exact stable org.webjars:swagger-ui dependency and identifies org.webjars as the group ID and swagger-ui as the artifact ID.",
+        "It mounts ResourceHandlerBuilder.webjarHandler(\"swagger-ui\") under ContextHandlerBuilder.context(\"/api-docs\") and identifies /api-docs/index.html as the UI entry page.",
+        "It overrides swagger-initializer.js before the WebJar handler so the UI loads /openapi.json rather than the stock Petstore document.",
+        "It explains that the one-argument handler reads Maven metadata and that an explicit artifact version can be supplied when multiple versions are present.",
+        "It keeps the existing OpenAPI generator and states that WebJar-hosted Swagger UI works with either Mu's built-in document or mu-swagger output without requiring Swagger annotations.",
+        "It states that same-origin UI access needs no CORS and does not add a permissive CORS policy."
+      ]
     }
   ]
 }

@@ -20,6 +20,10 @@
     "should_trigger": true
   },
   {
+    "query": "Serve Swagger UI at /api-docs from a WebJar in this Mu Server 3 app.",
+    "should_trigger": true
+  },
+  {
     "query": "Generate basic OpenAPI JSON from Mu REST annotations with no extra libraries.",
     "should_trigger": false
   },

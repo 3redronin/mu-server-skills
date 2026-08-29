@@ -32,6 +32,10 @@
     "should_trigger": true
   },
   {
+    "query": "Host Swagger UI from org.webjars with Mu Server 3's webjarHandler and point it at our OpenAPI JSON.",
+    "should_trigger": true
+  },
+  {
     "query": "Expose Mu Server's built-in OpenAPI JSON for these JAX-RS resources.",
     "should_trigger": false
   },

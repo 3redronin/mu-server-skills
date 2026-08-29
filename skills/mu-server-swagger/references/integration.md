@@ -71,9 +71,54 @@ Use `@Schema` on model types or properties and `@Content(schema = ...)` when inf
 
 A runtime JSON reader/writer is also separate from documentation generation. Register the application's provider with `addCustomReader(...)` and `addCustomWriter(...)` when API endpoints exchange objects. `mu-swagger` does not become the application's JSON serializer.
 
-## Connect a Swagger UI
+## Host Swagger UI with a WebJar
 
-`mu-swagger` does not bundle or serve Swagger UI assets. Point an existing, separately hosted UI at `/openapi.json` or `/openapi.yaml`.
+Swagger UI is separate from OpenAPI generation. It can render `/openapi.json` from either `MuOpenApiResource` or Mu Server's built-in `withOpenApiJsonUrl(...)`; using the UI does not by itself require `mu-swagger` or Swagger annotations.
+
+On Mu Server 3, add an exact release of the Swagger UI WebJar. Its Maven coordinates are:
+
+- group ID: `org.webjars`
+- artifact ID: `swagger-ui`
+
+For example, `org.webjars:swagger-ui:5.32.14` was the newest stable release in Maven Central on 29 August 2026. Verify the current stable release when editing a build.
+
+Mount the WebJar under an application-owned path. The stock WebJar's `swagger-initializer.js` points at the Petstore example, so register an initializer route before the static resource handler and point it at this application's document:
+
+```java
+ContextHandlerBuilder swaggerUi = ContextHandlerBuilder.context("/api-docs")
+    .addHandler(Method.GET, "/swagger-initializer.js", (request, response, pathParams) -> {
+        response.contentType(ContentTypes.APPLICATION_JAVASCRIPT);
+        response.write("""
+            window.onload = function() {
+              window.ui = SwaggerUIBundle({
+                url: "/openapi.json",
+                dom_id: "#swagger-ui",
+                deepLinking: true,
+                presets: [
+                  SwaggerUIBundle.presets.apis,
+                  SwaggerUIStandalonePreset
+                ],
+                plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+                layout: "StandaloneLayout"
+              });
+            };
+            """);
+    })
+    .addHandler(ResourceHandlerBuilder.webjarHandler("swagger-ui"));
+
+MuServer server = serverBuilder
+    .addHandler(api)
+    .addHandler(swaggerUi)
+    .start();
+```
+
+Open `/api-docs/index.html`. Adapt the `url` if the selected document is mounted elsewhere. The one-argument `webjarHandler("swagger-ui")` reads the version from the WebJar's Maven metadata. If more than one version is on the runtime classpath, resolve the dependency conflict or select one explicitly with `webjarHandler("swagger-ui", "5.32.14")`.
+
+`webjarHandler(...)` is a Mu Server 3 API. On 2.x, either keep Swagger UI separate or mount the same WebJar with `classpathHandler("/META-INF/resources/webjars/swagger-ui/5.32.14")`; keep the custom initializer ahead of that resource handler and make its path match the dependency's exact version.
+
+## Connect an externally hosted Swagger UI
+
+Point an existing UI at `/openapi.json` or `/openapi.yaml`. `mu-swagger` does not itself bundle Swagger UI assets; the WebJar is a separate optional dependency.
 
 No CORS configuration is needed when the UI and API have the same origin. For a UI on another origin, allow only the required origin and headers on the REST handler, for example:
 
