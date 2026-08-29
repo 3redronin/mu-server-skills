@@ -12,7 +12,7 @@ Build on the user's application structure and treat its public HTTP behavior as 
 
 Before editing, inspect the build, Java and mu-server versions, package names, bootstrap code, resource and provider classes, server lifecycle, and tests. Preserve explicit choices and existing conventions unless the user asks to change them.
 
-Identify the target major line before choosing APIs or expected HTTP behavior. Mu Server 3 is currently a preview line whose artifacts use versions such as `0.0.3.x`; do not infer the product line from the first version component. Do not substitute the preview for the latest stable release unless the user requests Mu Server 3 or an upgrade. For a Mu Server 3 task or a 2.x-to-3 upgrade, read [Mu Server 2.x and 3.x differences](references/version-differences.md) before changing code.
+Identify the target major line before choosing APIs or expected HTTP behavior. For a Mu Server 3 task or a 2.x-to-3 upgrade, read [Mu Server 2.x and 3.x differences](references/version-differences.md) before changing code.
 
 For a new project, prefer the latest stable Java version unless the user specifies one. Use port `8080` when no port is given. Preserve an existing application's port and startup/shutdown model.
 

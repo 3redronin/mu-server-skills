@@ -1,6 +1,6 @@
 # Mu Server 2.x and 3.x differences
 
-Read this reference when targeting Mu Server 3, upgrading a 2.x application, or diagnosing behavior that changes with the major line. These distinctions come from the [Mu Server 3 preview and migration notes](https://muserver.io/changelog/mu-server-3). Mu Server 3 preview artifacts use versions such as `0.0.3.x`; verify the current prerelease and its Javadocs rather than assuming a `3.x` artifact version.
+Read this reference when targeting Mu Server 3, upgrading a 2.x application, or diagnosing behavior that changes with the major line. These distinctions come from the [Mu Server 3 release and migration notes](https://muserver.io/changelog/mu-server-3). Check the selected release's Javadocs for any later changes.
 
 Mu Server 3 moves from Java 8 to Java 11 minimum, Jakarta REST 3.0 to 3.1, and SLF4J 1.7 to 2.0. Its public APIs carry JSpecify nullness annotations. The Maven coordinates and Java package names do not change. An SLF4J 1.7 binding is not an SLF4J 2 provider and therefore will not be discovered after the upgrade.
 

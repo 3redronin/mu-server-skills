@@ -46,7 +46,7 @@
     },
     {
       "id": "review-mu3-upgrade",
-      "prompt": "Review an upgrade of a mu-server 2.4.1 Jakarta REST application to the Mu Server 3 preview. The current app owns singleton resource and Jackson provider instances, explicitly registers the problem-details mapper for Throwable, relies on reader interceptors running in addition order despite their @Priority values, accepts repeated tags as List<String>, and starts through MuServerBuilder. Explain the necessary platform changes, which source/configuration can stay, which behavior changes, and the focused HTTP tests to run. Also explain when RestHandlerBuilder.fromApplication or SeBootstrap would be appropriate; do not change the bootstrap just for novelty.",
+      "prompt": "Review an upgrade of a mu-server 2.4.1 Jakarta REST application to Mu Server 3. The current app owns singleton resource and Jackson provider instances, explicitly registers the problem-details mapper for Throwable, relies on reader interceptors running in addition order despite their @Priority values, accepts repeated tags as List<String>, and starts through MuServerBuilder. Explain the necessary platform changes, which source/configuration can stay, which behavior changes, and the focused HTTP tests to run. Also explain when RestHandlerBuilder.fromApplication or SeBootstrap would be appropriate; do not change the bootstrap just for novelty.",
       "expected_output": "A version-specific upgrade review grounded in Mu Server 3's Java, Jakarta REST, logging, bootstrap, exception, provider, interceptor, and parameter behavior while preserving singleton ownership and the existing direct builder where it remains suitable.",
       "files": [],
       "assertions": [
