@@ -1,0 +1,53 @@
+{
+  "skill_name": "mu-server-testing",
+  "evals": [
+    {
+      "id": "extend-application-contract-harness",
+      "prompt": "Extend the Maven Java 11 Mu Server 2.4.1 test harness in this directory. Add GET and HEAD /orders/{id : [0-9]+}; GET must return status 200, two separate Set-Cookie values, and the exact UTF-8 bytes for `order-{id}-\u03bc`, while HEAD returns the corresponding Content-Length and no body. Add /latest as a 302 redirect to /orders/42. Keep every test parallel-safe on loopback port 0, derive URLs from the started server, keep redirects disabled, close response streams, and add a raw HTTP/1.1 test showing that a non-numeric path falls through to 404 without importing Mu's internal test scaffolding. Run the tests and summarize the observable contracts.",
+      "expected_output": "A runnable application-level JUnit suite using a real ephemeral Mu Server and network clients, with exact GET/HEAD/header/byte/redirect/fall-through assertions and bounded cleanup.",
+      "files": [
+        "evals/files/application-contract-harness"
+      ],
+      "assertions": [
+        "The project still compiles and tests with Java 11 and io.muserver:mu-server 2.4.1; any added third-party test tools remain test-scoped.",
+        "Each test fixture binds a real MuServer to loopback port 0 and constructs requests from the URI returned after start rather than a hard-coded or predicted port.",
+        "GET /orders/42 asserts status 200, both distinct Set-Cookie header values through an all-values API, an explicit UTF-8-compatible content type, and exact bytes for order-42-\u03bc.",
+        "HEAD /orders/42 asserts the same representation length through Content-Length and zero response-body bytes rather than assuming a GET route automatically handles HEAD.",
+        "The /latest test disables automatic redirect following and asserts status 302 plus the resolved Location for /orders/42.",
+        "A bounded raw socket writes valid CRLF and Host syntax, tests the non-numeric path over HTTP/1.1, and observes the application's 404/fall-through behavior without assuming the connection is reusable.",
+        "Closeable response bodies, sockets, and the server are closed on failure paths; no scaffolding.ServerUtils, ClientUtils, MuAssert, or RawClient import or copied trust-all global is introduced.",
+        "The reported test command passes and the summary states the Mu/Java versions, dynamic URI strategy, redirect policy, and contracts exercised."
+      ]
+    },
+    {
+      "id": "repair-flaky-streaming-cleanup-tests",
+      "prompt": "Our Mu Server application test for POST /import is flaky: it sleeps 500 ms, uploads one tiny body, sees 202, and immediately asserts that a temp file and an executor-backed import job were cleaned up. Production failures involve a slow multi-megabyte upload, client disconnect halfway through, and two imports racing for the same filename. Redesign the application tests with our existing JUnit/client stack. Use a real ephemeral server and temporary roots, cover exact upload bytes, the size boundary, disconnect, concurrency, response-complete cleanup, and leave no threads or files. Explain which checks need a normal client versus a raw socket.",
+      "expected_output": "Deterministic real-server tests coordinated by observable events and deadlines, with pressure, boundary, disconnect, collision, completion, and resource-cleanup assertions rather than timing sleeps.",
+      "files": [],
+      "assertions": [
+        "The design starts the production handler graph on loopback port 0, derives the request URI from the running server, creates a unique temporary root and mutable coordination state per test, and guarantees teardown after setup or assertion failure.",
+        "It replaces sleep-based correctness with latches/futures or eventual assertions tied to named phases such as request accepted, bytes persisted, disconnect observed, response completion, job cancellation, and file deletion, each with a deadline.",
+        "The body cases include empty/final-partial/multi-buffer or multi-megabyte content, byte-for-byte persistence, exact configured size boundary and just-over rejection, and a deliberately delayed reader or writer when applying pressure.",
+        "The disconnect case uses a bounded raw socket only because partial/truncated request bodies are difficult for the normal client to express; it sends valid request-line, Host, Content-Length, and CRLF before closing partway and does not require connection reuse.",
+        "Concurrent requests are synchronized to overlap deterministically and assert the application's collision policy without shared fixed filenames or test-order dependence.",
+        "The test waits for the server-side response-complete/cleanup signal after the client result, distinguishes transport completion from HTTP status, and verifies exactly-once temp-file, job, executor/subscription, and request cleanup on success, rejection, and disconnect.",
+        "The normal HTTP client remains the default for status/header/body/413 cases, response bodies are consumed or closed, and no internal Mu source-test scaffolding or global trust-all state is adopted."
+      ]
+    },
+    {
+      "id": "review-upgrade-protocol-test-suite",
+      "prompt": "Review our application integration suite while moving from Mu Server 2.4.1 to Mu Server 3. It runs all tests against one fixed port, follows redirects, trusts every TLS certificate globally, labels any successful HTTPS call as HTTP/2, and asserts stop(2, SECONDS) is false after a clean drain. Propose focused changes and test sketches for parallel execution, redirects, HTTPS/ALPN and HTTP/1.1 parity, an in-flight graceful drain plus timeout, and one packaged-process smoke test. Treat Mu Server 3 as released and keep io.muserver:mu-server coordinates without guessing a version number.",
+      "expected_output": "A version-aware application-test review that isolates real servers and trust, proves negotiated protocols and shutdown outcomes, and separates fast integration coverage from a packaged lifecycle smoke test.",
+      "files": [],
+      "assertions": [
+        "The review treats Mu Server 3 as released, keeps io.muserver:mu-server coordinates, avoids the historical mu3 artifact and an invented final v3 version, and notes Java 11/JSpecify implications relevant to the test code.",
+        "Fast tests use independent real servers on loopback port 0 and returned server URIs with per-test state, closed bodies, deterministic cleanup, and redirect following disabled where status and Location are asserted.",
+        "HTTPS trust is limited to the fixture CA/certificate and client instance, without global trust managers or hostname-verifier changes; HTTP/2 is enabled over HTTPS and proven through negotiated ALPN/client protocol rather than inferred from status.",
+        "The suite runs relevant contracts over both HTTP/1.1 and HTTP/2 and reserves raw sockets for HTTP/1 wire inputs that high-level clients normalize or reject.",
+        "Graceful-drain tests coordinate a known in-flight request and stop call with latches/futures and deadlines, assert request/listener outcomes, new-connection refusal, and both completion-before-deadline and timeout-abort paths.",
+        "The review explicitly changes Mu 2.4.1's reversed timed-stop boolean expectation to Mu 3's documented true-on-clean and false-on-timeout behavior without treating the old defect as a portable contract.",
+        "The packaged smoke test builds and starts the actual artifact with production-style configuration, waits on bounded readiness, checks a small public contract, exercises supported termination, captures failure logs, and remains separate from fast per-test integration."
+      ]
+    }
+  ]
+}

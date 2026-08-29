@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Add black-box JUnit tests for my Mu Server routes using a random loopback port, including HEAD, duplicate Set-Cookie headers, redirects and exact bytes.",
+    "should_trigger": true
+  },
+  {
+    "query": "our muserver CI randomly gets address already in use and sometimes leaves Netty threads behind; fix the integration fixture",
+    "should_trigger": true
+  },
+  {
+    "query": "Test how this Mu Server app responds to a truncated Content-Length body and two Host headers; Java HttpClient won't send them.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create HTTPS and HTTP/2 application tests that prove ALPN negotiation without installing a global trust-all manager.",
+    "should_trigger": true
+  },
+  {
+    "query": "My async Mu endpoint's cleanup assertion races after the client receives the body. Make the disconnect and ResponseCompleteListener test deterministic.",
+    "should_trigger": true
+  },
+  {
+    "query": "Update our graceful shutdown integration tests for mu-server 3; the boolean expectation came from 2.4.1.",
+    "should_trigger": true
+  },
+  {
+    "query": "Fix a race in NettyResponseAdaptor inside the cloned mu-server library and add its internal regression test.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write Mockito unit tests for this Java price calculator; it has no HTTP endpoints.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use Playwright to check the CSP and SameSite behavior of our browser UI through the staging load balancer.",
+    "should_trigger": false
+  },
+  {
+    "query": "Benchmark Mu Server at 100k requests per second and graph p99 latency under CPU saturation.",
+    "should_trigger": false
+  },
+  {
+    "query": "Implement the /orders MuHandler and decide its path matching and fall-through order; tests can come later.",
+    "should_trigger": false
+  },
+  {
+    "query": "Set up Prometheus alerts for active Mu Server connections in our Kubernetes production cluster.",
+    "should_trigger": false
+  }
+]
