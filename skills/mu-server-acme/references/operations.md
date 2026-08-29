@@ -10,7 +10,7 @@ For every configured name:
 
 1. Resolve A and AAAA records from outside the deployment. Remove or fix any published address that cannot reach the service; the CA may validate through it. Check that any CAA records authorize the chosen CA.
 2. Confirm public TCP 80 reaches this application's exact `/.well-known/acme-challenge/` path without authentication, a generic redirect running first, a fallback response, caching, or path rewriting. HTTP-01 is validated on public port 80 even if Mu listens on another internally forwarded port.
-3. Confirm public TCP 443 reaches the HTTPS listener and outbound TCP 443 reaches the ACME directory. Do not allowlist guessed CA validator IP ranges; Let's Encrypt does not publish a stable range.
+3. Confirm outbound TCP 443 reaches the ACME directory. Confirm public TCP 443 reaches the HTTPS listener for the application and whenever HTTP-01 is redirected to HTTPS; direct HTTP-01 validation itself depends on public port 80. Do not allowlist guessed CA validator IP ranges; Let's Encrypt does not publish a stable range.
 4. Confirm the config directory is durable, writable by exactly the runtime identity that needs it, and unique to this staging/production environment and exact SAN set.
 
 Let's Encrypt follows limited HTTP-01 redirects to HTTP or HTTPS on ports 80 or 443 and does not validate the certificate on an HTTPS redirect during bootstrapping. The direct Mu challenge handler is still the clearest path: keep it before the HTTPS redirector.
@@ -21,7 +21,7 @@ Use staging first. Staging creates a separate ACME account and an intentionally 
 
 `start(server)` schedules a check immediately and then every 24 hours. In 2.0.1 source, a new order is requested when any certificate in the loaded chain expires before now plus seven days. The interface Javadocs and Mu Server integration page still say three days; the implementation and its 2019 change history establish seven days.
 
-The manager has no health API, metrics callback, configurable schedule, or configurable renewal window. Monitor both its SLF4J logs and the certificate actually presented by the public endpoint. Alert with enough lead time to diagnose DNS, port 80, storage, account, clock, and CA failures before the seven-day window closes.
+The manager has no health API, metrics callback, configurable schedule, or configurable renewal window. It also does not use ACME Renewal Information (ARI) or add jitter to its fixed daily task. Re-check the CA's current integration guidance: modern controllers can use ARI, and clients without ARI are generally expected to spread renewal and retry work rather than synchronize a fleet. Monitor both its SLF4J logs and the certificate actually presented by the public endpoint. Alert with enough lead time to diagnose DNS, port 80, storage, account, clock, and CA failures before the seven-day window closes.
 
 On background failure:
 
@@ -29,6 +29,8 @@ On background failure:
 - other exceptions are logged at WARN with a stack trace;
 - the daily scheduler remains alive, while the currently installed certificate—or first-start self-signed identity—continues to be served;
 - there is no immediate general retry loop after the task returns.
+
+The current authorization path does not clear its in-memory challenge token and response in a `finally` block. A failed authorization can therefore leave the last exact token response active until another order changes it or the process stops. This is a narrow stale challenge response rather than a general authentication bypass, but diagnostics and tests should account for the observable failure state.
 
 The 2.0.1 `AcmeRetryAfterException` path subtracts epoch milliseconds from epoch seconds, so a CA `Retry-After` is effectively clamped to the implementation's 500 ms minimum rather than honored accurately. Treat rate-limit responses as an operational stop signal, use staging for diagnosis, and do not depend on this internal retry path.
 
@@ -39,6 +41,8 @@ The 2.0.1 `AcmeRetryAfterException` path subtracts epoch milliseconds from epoch
 ## Design one certificate writer
 
 An `AcmeCertManager` keeps only its current HTTP-01 token and response in process memory. Its three config files use fixed names, plain `FileWriter` updates, and no inter-process locks or change watcher. Sharing one directory among active managers does not coordinate orders or refresh the TLS contexts of replicas that did not perform the renewal.
+
+In Kubernetes, an `emptyDir` belongs to one Pod, is not shared by replicas, and is deleted when that Pod is removed. Giving each replica the same path string therefore creates independent ephemeral accounts, keys, chains, and tokens. Replacing it with one multi-writer RWX volume introduces the unsupported shared-writer races above rather than providing coordination.
 
 For multiple replicas, prefer one explicitly elected issuer with stable persistent storage, route every challenge request to that issuer, then distribute the resulting certificate and private key through an intentional secret-delivery and per-replica reload mechanism. Protect that challenge route and key distribution boundary.
 
