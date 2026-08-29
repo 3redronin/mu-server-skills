@@ -29,7 +29,7 @@
         "It treats filename, content type, and extension as client claims; avoids the public web root and client-derived path; validates actual bytes with bounded processing; and covers active content or decompression/output amplification where relevant.",
         "It proposes unique private staging, explicit permissions, a server-generated final identity, a documented collision policy, atomic same-filesystem publication, cleanup/reconciliation after every failure, and a janitor for abandoned staging without deleting committed files.",
         "It recommends raw inputStream or AsyncHandle/RequestBodyListener only when the contract can stream raw bytes, states that an async listener runs on NIO threads and must use bounded offloading/backpressure, and does not propose an ad hoc multipart parser.",
-        "It treats Mu Server 3 as released, states that it keeps io.muserver:mu-server and the upload lifecycle, adds Jakarta REST UploadedFile[] support, and does not implement EntityPart, without inventing a final 3.x artifact version.",
+        "It treats Mu Server 3 as released, states that it keeps io.muserver:mu-server and the direct upload lifecycle, and does not invent a direct-handler behavior change or final 3.x artifact version. If it discusses Jakarta REST binding, UploadedFile[] is Mu 3-only and EntityPart remains unsupported.",
         "The test plan covers declared and chunked oversize bodies, multipart overhead, missing/repeated/empty files, hostile names, content mismatch, malformed/truncated bodies, interruption, persistence after completion, staging cleanup, quota release, and concurrent collisions followed by a healthy request."
       ]
     },
