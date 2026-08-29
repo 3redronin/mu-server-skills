@@ -38,7 +38,7 @@ Plugin marketplaces and installation commands are still host-specific. Until thi
 ## Included skills
 
 - `mu-server-get-started` creates or adapts a Maven or Gradle application with a direct handler and static resources, then verifies it over HTTP.
-- `mu-server-jaxrs` builds and diagnoses Jakarta REST applications hosted by mu-server.
+- `mu-server-jaxrs` creates Jakarta REST APIs with application-owned singleton resources and explicit provider registration.
 
 After installation, ask your agent naturally, for example:
 

@@ -1,0 +1,58 @@
+[
+  {
+    "query": "Add a Jakarta REST @Path resource to my mu-server app and wire its service through the constructor.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a Maven JAX-RS API hosted by Mu Server with two singleton resources.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why isn't my @Provider exception mapper discovered by muserver? Please fix the registration.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set up JacksonJsonProvider as a reader and writer on RestHandlerBuilder.",
+    "should_trigger": true
+  },
+  {
+    "query": "Expose mu-server's built-in OpenAPI JSON for these jakarta.ws.rs endpoints.",
+    "should_trigger": true
+  },
+  {
+    "query": "My Mu Server @PathParam works but constructor injection is null; diagnose the lifecycle.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add an RFC 9457 exception mapper to this mu-server REST API.",
+    "should_trigger": true
+  },
+  {
+    "query": "Implement a ContainerRequestFilter for the Jakarta REST handler in my io.muserver app.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a tiny direct MuHandler GET route and serve an index.html from the classpath.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a JAX-RS resource to Jersey and deploy it to Tomcat.",
+    "should_trigger": false
+  },
+  {
+    "query": "Build a REST controller with Spring Boot and Jackson.",
+    "should_trigger": false
+  },
+  {
+    "query": "In the mu-server source repository, change RestHandler's URI matching implementation.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade Jakarta REST dependencies in this Quarkus service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review the JAX-RS 3.1 specification's rules for request filters without changing code.",
+    "should_trigger": false
+  }
+]

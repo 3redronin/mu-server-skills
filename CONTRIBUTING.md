@@ -14,6 +14,8 @@ skills/
     evals/
   mu-server-jaxrs/
     SKILL.md
+    references/
+    evals/
 .codex-plugin/plugin.json
 .claude-plugin/plugin.json
 ```

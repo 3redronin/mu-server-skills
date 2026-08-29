@@ -1,0 +1,42 @@
+[
+  {
+    "query": "I have two @Path classes in a mu-server app. Instantiate them with my services and put both on a single REST handler.",
+    "should_trigger": true
+  },
+  {
+    "query": "Make a Gradle JAXRS hello API with muserver and verify its media type over HTTP.",
+    "should_trigger": true
+  },
+  {
+    "query": "Configure CORS only for the Jakarta REST endpoints served by Mu Server.",
+    "should_trigger": true
+  },
+  {
+    "query": "Register a custom MessageBodyReader and ParamConverter with RestHandlerBuilder.",
+    "should_trigger": true
+  },
+  {
+    "query": "Does Mu Server create a new jakarta.ws.rs resource for every request? Adapt this stateful resource safely.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add a plain mu-server /ping handler without annotations or REST resources.",
+    "should_trigger": false
+  },
+  {
+    "query": "My RESTEasy provider is not being selected in WildFly; investigate it.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix malformed HTTP/2 frame handling inside the mu-server library and add a protocol test.",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate an OpenAPI document for a Micronaut controller project.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain how constructor injection scopes work in Jakarta CDI in general.",
+    "should_trigger": false
+  }
+]

@@ -1,0 +1,48 @@
+{
+  "skill_name": "mu-server-jaxrs",
+  "evals": [
+    {
+      "id": "new-maven-singleton",
+      "prompt": "This directory is empty. Create a minimal Maven Java 17 application using mu-server's Jakarta REST support. Run it explicitly on port 8080. Add GET /hello/{name}, producing text/plain and returning `Hello, {name}`. Put the greeting logic in a small service, construct that service and the resource in the application, and use constructor wiring. Use the current stable mu-server release, make the app straightforward to run, build it, and verify the endpoint over HTTP.",
+      "expected_output": "A minimal Maven Java 17 application with one io.muserver:mu-server dependency, an application-created greeting service and resource singleton, one RestHandler registered on a server at port 8080, and a verified text/plain parameterized greeting.",
+      "files": [],
+      "assertions": [
+        "The project compiles on Java 17 and has exactly one direct io.muserver:mu-server dependency at the current stable release, or 2.4.1 if online verification was unavailable.",
+        "The server binds explicitly to port 8080 and registers exactly one RestHandlerBuilder-created REST handler.",
+        "The application constructs one greeting service and one resource, passes the service through the resource constructor, and registers the resource instance rather than a class.",
+        "GET /hello/Daniel returns status 200, Content-Type text/plain, and body Hello, Daniel on repeated and concurrent requests.",
+        "The resource uses jakarta.ws.rs annotations and method-parameter binding for the name.",
+        "No direct Jakarta REST API, dependency-injection container, Jersey, RESTEasy, Spring, or unrelated runtime dependency was added."
+      ]
+    },
+    {
+      "id": "new-gradle-problem-details",
+      "prompt": "Create a new Gradle application using the Groovy DSL and Java 17. Host a mu-server Jakarta REST API on port 9091 with GET /validate. The resource should throw a mu-server ProblemDetailsException with status 422, title `Validation Failed`, and detail `Name is required`. Explicitly register mu-server's RFC 9457 exception mapper so the response is problem-details JSON. Use the current stable mu-server release, build it, and verify the status, content type, and JSON fields over HTTP.",
+      "expected_output": "A runnable Gradle Groovy Java 17 application using one mu-server REST handler and an explicitly registered ProblemDetailsExceptionMapper, with /validate verified as an RFC 9457 application/problem+json response with the requested fields.",
+      "files": [],
+      "assertions": [
+        "The Gradle Groovy project compiles on Java 17 and has exactly one direct io.muserver:mu-server dependency at the current stable release, or 2.4.1 if online verification was unavailable.",
+        "The server binds explicitly to port 9091 and registers one application-created resource instance with one REST handler.",
+        "The ProblemDetailsExceptionMapperBuilder mapper is explicitly registered for Throwable on the RestHandlerBuilder.",
+        "GET /validate returns status 422, Content-Type application/problem+json, title Validation Failed, detail Name is required, and numeric status 422.",
+        "No JSON provider, direct Jakarta REST API, dependency-injection container, alternate JAX-RS implementation, or unrelated runtime dependency was added."
+      ]
+    },
+    {
+      "id": "adapt-gradle-kotlin-multiple-resources",
+      "prompt": "Extend the existing Gradle Kotlin/JVM mu-server app in this directory. Keep its Java level, mu-server version, package, port, /health route, and startup structure intact. Add two Jakarta REST singleton resources: GET /api/greet/{name} returns `Hello, {name}`, and GET /api/count returns the next request number from the existing ApplicationService. Pass the existing ApplicationService into both resource constructors. Register both resource instances on one RestHandler, not one handler per resource. Build it and verify /health plus both REST endpoints, including concurrent requests to /api/count.",
+      "expected_output": "The existing Java 11 Gradle Kotlin app remains on mu-server 2.4.0 and port 8182; two constructor-wired singleton resource instances share its existing ApplicationService through one RestHandler while /health remains intact.",
+      "files": [
+        "evals/files/adapt-gradle-kotlin-multiple-resources"
+      ],
+      "assertions": [
+        "The existing Gradle Kotlin DSL, Java 11 toolchain, example package, io.muserver:mu-server version 2.4.0, explicit port 8182, entry point, and direct /health handler are preserved.",
+        "The application constructs both Jakarta REST resource instances, passes the same existing ApplicationService to both constructors, and registers them with exactly one RestHandler.",
+        "GET /health still returns status 200 and body healthy.",
+        "GET /api/greet/Daniel returns status 200, Content-Type text/plain, and body Hello, Daniel.",
+        "Twenty concurrent GET /api/count requests all return status 200 and collectively produce the unique integers 1 through 20, demonstrating thread-safe shared singleton state.",
+        "No duplicate server, entry point, mu-server dependency, direct Jakarta REST API, dependency-injection container, or alternate JAX-RS implementation was added."
+      ]
+    }
+  ]
+}
