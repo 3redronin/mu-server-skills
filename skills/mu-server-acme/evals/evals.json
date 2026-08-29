@@ -1,0 +1,49 @@
+{
+  "skill_name": "mu-server-acme",
+  "evals": [
+    {
+      "id": "new-maven-staged-rollout",
+      "prompt": "This directory is empty. Create a Maven Java 11 application using Mu Server 2.4.1 and the current stable mu-acme release for example.com and www.example.com. Production defaults must bind public HTTP 80 and HTTPS 443, with environment overrides so local verification can use unprivileged free ports. Use Let's Encrypt staging unless ACME_ENV=production, use /var/lib/example/acme with safely separated staging and production state, redirect ordinary public HTTP to HTTPS, return `healthy` from GET /health, and let ACME be disabled with ACME_DISABLED=true for local runs. Add a normal compatible SLF4J provider, build it, run and verify the disabled mode over local HTTP without calling a CA, and explain the production DNS/firewall/readiness checks still required.",
+      "expected_output": "A compiling Maven Java 11 application with direct Mu Server 2.4.1 and current stable mu-acme dependencies, one compatible SLF4J provider, environment-specific persistent ACME state, the correct manager/server lifecycle and handler order, a locally verified disabled mode, and an honest production preflight report that makes no external issuance claim.",
+      "files": [],
+      "assertions": [
+        "The project compiles on Java 11 with direct io.muserver:mu-server:2.4.1 and the current stable io.muserver:mu-acme release selected from verified published data.",
+        "The resolved graph has one SLF4J 2 API and one runtime provider, retains mu-acme's transitive acme4j and Bouncy Castle libraries, and does not add a second server framework or explicit Bouncy Castle registration.",
+        "Staging and production select letsEncryptStaging() and letsEncrypt() respectively and use distinct durable config directories for the exact example.com/www.example.com SAN set.",
+        "The server defaults production to HTTP 80 and HTTPS 443 while permitting safe local port overrides, calls createHttpsConfig before server start, registers the ACME handler before the HTTPS redirect and /health fallback, starts the manager only after the server, and stops the manager before the server.",
+        "ACME_DISABLED=true makes no CA request and the built application starts in disabled mode with GET /health returning status 200 and body healthy; verification does not use a trust-all or hostname-bypassing client as evidence of a real certificate.",
+        "The report states that first start serves a temporary self-signed identity and identifies external A/AAAA, public inbound 80 and 443, outbound 443, challenge-path bypass, persistence, readiness, and default-trust production verification as remaining checks; it does not claim issuance occurred."
+      ]
+    },
+    {
+      "id": "review-broken-kubernetes-integration",
+      "prompt": "Review this planned Kubernetes integration before we deploy it: all three replicas mount an emptyDir at /tmp/acme, each calls letsEncrypt().withDomain(\"*.example.com\").withConfigDir(\"/tmp/acme\").build(), calls start(server) before creating the server, uses createSSLContext(), puts the HTTPS redirect and auth handler before createHandler(), then calls forceRenew() from readiness every 30 seconds until curl -k passes. If per-pod state fails, the team plans to mount one shared RWX volume instead. We tested staging last week and plan to reuse its directory in production. Explain every correctness, security, lifecycle, and rate-limit problem and propose a safe architecture. We need a wildcard, so be candid if embedded mu-acme is the wrong fit.",
+      "expected_output": "A source-grounded review rejecting the design: HTTP-01 cannot issue the wildcard, the API/lifecycle/order are wrong, emptyDir is per-pod and ephemeral while a shared volume still would not coordinate managers, force renewal and trust-all verification are invalid, and a DNS-01-capable external design is recommended for the stated requirements.",
+      "files": [],
+      "assertions": [
+        "The review explains that mu-acme supports HTTP-01 only and therefore cannot issue *.example.com; it recommends a DNS-01-capable client or platform rather than pretending an apex-domain addition fixes wildcard validation.",
+        "It corrects createSSLContext() to createHttpsConfig() and gives the sequence create config, add challenge handler first, start server, start manager, then stop manager before server on shutdown.",
+        "It identifies emptyDir as per-pod, non-durable sensitive state and names acme-account-key.pem, domain-key.pem, and cert-chain.crt; it requires restricted persistent storage and separate state for staging, production, and domain sets.",
+        "It explains that replacing emptyDir with one shared directory still does not coordinate three managers: challenge tokens are in process memory, file writes have no locks or atomic replacement, and non-renewing replicas do not automatically reload another replica's files.",
+        "It rejects readiness-triggered forceRenew because it requires a started manager, always makes a new order, can amplify failures and rate limits, and should not be an automated retry loop.",
+        "It rejects curl -k as issuance evidence and specifies staging with a scoped staging trust store or production with normal trust plus hostname/chain/expiry checks over a fresh connection.",
+        "The safe architecture uses a DNS-01-capable certificate controller for the wildcard, durable secret storage, controlled distribution/rotation, and explicit per-replica reload; any HTTP-01 alternative uses one elected issuer and deterministic challenge routing."
+      ]
+    },
+    {
+      "id": "diagnose-renewal-failure",
+      "prompt": "Our single-instance Mu Server site still serves a valid Let's Encrypt cert, but it expires in six days and did not rotate after yesterday's restart. mu-acme logs `Could not order certificate`; port 80 now goes through a new auth gateway, while 443 still works. An operator wants to delete the config directory and run forceRenew repeatedly. Diagnose this from mu-acme's actual behavior and give a low-risk recovery and verification plan. The app also adds custom client-certificate settings to the HttpsConfigBuilder returned at startup, so include the post-renewal consequence.",
+      "expected_output": "A low-risk incident plan centered on restoring unauthenticated HTTP-01 routing, preserving account/domain keys and the old valid certificate, observing a deliberate renewal, and validating the newly served identity and TLS policy on fresh default-trusting connections.",
+      "files": [],
+      "assertions": [
+        "The diagnosis states that mu-acme 2.0.1 checks immediately and every 24 hours and renews inside seven days, explicitly resolving the stale three-day documentation discrepancy.",
+        "It identifies the auth gateway on public port 80 as the leading failure because the ACME challenge must reach the manager before authentication/redirect/fallback processing, while also checking DNS A/AAAA and outbound 443.",
+        "It preserves and secures acme-account-key.pem, domain-key.pem, and cert-chain.crt instead of deleting healthy durable identity state or replacing the still-valid served certificate prematurely.",
+        "It explains that background order failures are logged while the old certificate remains served, that forceRenew is synchronous and always creates an order, and that repeated forced attempts can worsen rate limiting; staging or one deliberate production attempt follows the routing fix.",
+        "It notes that automatic renewal calls changeHttpsConfig with a newly built config for new TLS connections, while existing connections retain their session and caller-added client-certificate or other TLS settings are not automatically reapplied.",
+        "The plan verifies the public certificate over a fresh connection using normal platform trust and hostname validation, checks SAN/issuer/chain/serial/validity plus the application response, and separately regression-tests required client-certificate behavior without any trust-all client.",
+        "The plan adds alerts for mu-acme WARN logs and the certificate actually presented at the endpoint, and acknowledges the lack of a manager health API or configurable renewal schedule/window."
+      ]
+    }
+  ]
+}

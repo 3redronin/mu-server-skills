@@ -1,0 +1,34 @@
+[
+  {
+    "query": "wire io.muserver:mu-acme into this java server so letsencrypt http-01 works before our auth redirect and renews without restarts",
+    "should_trigger": true
+  },
+  {
+    "query": "Why did switching AcmeCertManager from staging to production keep serving the staging chain from the same config folder? Fix the rollout.",
+    "should_trigger": true
+  },
+  {
+    "query": "We share /var/lib/acme across two Mu Server replicas and renewals are flaky. Trace the challenge token, key files, and HTTPS reload behavior.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a Java 11 Mu Server HTTPS service whose ACME manager is a no-op on laptops and uses public ports 80 and 443 in production.",
+    "should_trigger": true
+  },
+  {
+    "query": "Generate a self-signed development certificate for localhost and teach our Java client to trust only that certificate.",
+    "should_trigger": false
+  },
+  {
+    "query": "Build a generic acme4j DNS-01 client that updates Route53 and issues *.example.org; it is not embedded in Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Our Mu Server HTTPS redirect returns 400 for POST requests. Explain the handler's status and Location behavior; certificate renewal is unrelated.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade this application from Mu Server 2 to Mu Server 3 and audit Jakarta REST behavior; it has no ACME integration.",
+    "should_trigger": false
+  }
+]

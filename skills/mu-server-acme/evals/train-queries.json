@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Add Let's Encrypt auto-renewal to our embedded Mu Server app with io.muserver:mu-acme and keep the HTTP redirect working.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our AcmeCertManager starts with a self-signed cert and never switches to the real one; diagnose the startup sequence and port 80 challenge route.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set up Mu Server certificate issuance against Let's Encrypt staging, then give me a safe production cutover checklist.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can mu-acme renew one SAN certificate for api.example.net and www.example.net when the app runs on three pods behind a load balancer? Design it safely.",
+    "should_trigger": true
+  },
+  {
+    "query": "The cert served by our MuServer expires next week even though AcmeCertManager is running. Review logs, forceRenew risk, and how to verify a rotation.",
+    "should_trigger": true
+  },
+  {
+    "query": "Make ACME_DISABLED skip public CA calls locally while preserving our mu-acme production configuration.",
+    "should_trigger": true
+  },
+  {
+    "query": "Load this existing PKCS12 keystore into HttpsConfigBuilder and tighten TLS protocols; we do not use ACME.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use certbot with nginx to obtain and renew a Let's Encrypt certificate for this Python service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure cert-manager and a DNS-01 issuer for a wildcard certificate in our Kubernetes ingress; Mu Server only receives plain HTTP.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add authentication to these Mu Server REST endpoints and return 401 problem-details responses.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix the Retry-After arithmetic bug in the mu-acme library source and publish a patch release.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review HSTS, TLS cipher suites, HTTP/2 ALPN, and mutual TLS settings for our production Mu Server; certificates are supplied by the platform.",
+    "should_trigger": false
+  }
+]
