@@ -40,7 +40,9 @@ Read the supplied addresses with `request.connection().proxyInfo()`. The immedia
 - bytes read and sent;
 - invalid HTTP requests;
 - TLS/connect failures; and
-- requests rejected because the handler executor was overloaded.
+- requests counted by `rejectedDueToOverload()`.
+
+Despite that counter's name and Javadoc, the current 2.4.1/3 implementation increments it for both rate-limit `429` and handler-executor `503` rejections. Use `addRequestRejectListener(...)` and record its status when those causes must be distinguished; do not label the aggregate counter as executor saturation alone.
 
 Poll counters monotonically and calculate rates in the monitoring system. Alert on sustained overload/rejection, handshake failures, active-request or connection saturation, error latency, and certificate-expiry margins rather than a single absolute sample.
 
