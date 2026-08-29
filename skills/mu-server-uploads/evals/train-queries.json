@@ -1,0 +1,66 @@
+[
+  {
+    "query": "Add a secure multipart/form-data photo upload route to my mu-server app and save accepted files after validating them.",
+    "should_trigger": true
+  },
+  {
+    "query": "My MuRequest.uploadedFile works in the handler but the background job sees a deleted temp file. Diagnose and fix the lifecycle.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set sensible max request and slow-upload limits for these muserver form uploads, including chunked clients.",
+    "should_trigger": true
+  },
+  {
+    "query": "Implement repeated @FormParam UploadedFile documents on a Mu Server Jakarta REST resource with safe quarantine.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review this io.muserver upload endpoint for filename traversal, MIME spoofing, collisions, quotas, and cleanup.",
+    "should_trigger": true
+  },
+  {
+    "query": "Large browser uploads are tying up muhandler threads; decide whether we should use request.form or raw async request streaming.",
+    "should_trigger": true
+  },
+  {
+    "query": "Write black-box tests for missing files, empty filenames, multipart overhead, 413s, disconnect cleanup, and concurrent uploads in Mu Server.",
+    "should_trigger": true
+  },
+  {
+    "query": "Will UploadedFile.asFile still exist after the response finishes in muserver, and when should I call saveTo?",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a plain Mu Server GET /health route and package an index.html resource.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a JSON MessageBodyReader and exception mapper to this Mu Server JAX-RS API.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use an HTML file input and JavaScript fetch to upload directly to an S3 presigned URL; no Mu Server endpoint is involved.",
+    "should_trigger": false
+  },
+  {
+    "query": "Implement multipart file upload in a Spring Boot controller with MultipartFile.",
+    "should_trigger": false
+  },
+  {
+    "query": "Stream a large response file from a Mu Server ResourceHandler with range requests.",
+    "should_trigger": false
+  },
+  {
+    "query": "Proxy request bodies unchanged through Murp to an upstream upload service; the proxy must not parse the multipart body.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain RFC 7578 multipart/form-data syntax and boundary grammar without applying it to an application.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add attachment download headers to a Mu Server endpoint and sanitize the response filename.",
+    "should_trigger": false
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Our mu-server endpoint calls request.form() for a 5 GB multipart upload. Make it resource-bounded and explain what actually streams to disk.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why does uploadedFiles(\"files\") return several items while uploadedFile returns one? Add explicit cardinality validation.",
+    "should_trigger": true
+  },
+  {
+    "query": "Persist an io.muserver.UploadedFile safely under a server ID with atomic publication and no overwrite race.",
+    "should_trigger": true
+  },
+  {
+    "query": "After upgrading our upload resource to Mu Server 3, can @FormParam bind UploadedFile[] and EntityPart? Check the exact behavior.",
+    "should_trigger": true
+  },
+  {
+    "query": "A client disconnect during a multipart POST leaves quota reserved in our Mu Server app. Fix the failure cleanup design.",
+    "should_trigger": true
+  },
+  {
+    "query": "Use AsyncHandle.setReadListener for a raw binary upload with bounded disk writes and backpressure.",
+    "should_trigger": true
+  },
+  {
+    "query": "Configure TLS client certificates for a Mu Server listener that happens to expose an upload API.",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate OpenAPI multipart schemas for a Jersey resource using EntityPart.",
+    "should_trigger": false
+  },
+  {
+    "query": "The mu-server static file handler should set Content-Type correctly for .png files.",
+    "should_trigger": false
+  },
+  {
+    "query": "Read a small application/json body with MuRequest.readBodyAsString and deserialize it.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure nginx client_max_body_size in front of several backend frameworks.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review a Java NIO atomic move utility used by our batch importer; it does not receive HTTP uploads.",
+    "should_trigger": false
+  }
+]

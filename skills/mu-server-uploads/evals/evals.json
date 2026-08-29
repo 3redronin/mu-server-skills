@@ -1,0 +1,52 @@
+{
+  "skill_name": "mu-server-uploads",
+  "evals": [
+    {
+      "id": "direct-bounded-image-upload",
+      "prompt": "Create a Maven Java 11 Mu Server 2.4.1 application in this empty directory. Add POST /photos using the direct handler API and multipart/form-data field `photo`. Accept exactly one non-empty PNG of at most 2 MiB, store it under a server-generated name in a private `var/uploads` area, and return JSON metadata. Configure a finite total request limit and request-body idle timeout. The client filename and content type are only claims: reject traversal names safely and verify PNG bytes before publishing. Make persistence survive request completion, avoid overwrite races under concurrent same-name uploads, clean up every failed staging file, and add focused tests for the boundary and failure cases. Keep dependencies minimal, build, and run the tests.",
+      "expected_output": "A runnable Mu Server 2.4.1 application whose direct multipart handler has explicit whole-request and idle limits, secure staged persistence, actual PNG validation, collision-safe server naming, lifecycle-correct cleanup, and HTTP tests for normal, malformed, oversized, empty, hostile, interrupted, persistent, and concurrent uploads.",
+      "files": [],
+      "assertions": [
+        "The Maven project compiles on Java 11, retains io.muserver:mu-server:2.4.1 as the upload API, and adds no upload framework or unrelated runtime dependency.",
+        "The server configures finite withMaxRequestSize and withRequestTimeout values, and the documented/tested request limit accounts for multipart overhead rather than treating 2 MiB as the total encoded size of a 2 MiB file.",
+        "The direct POST handler requires multipart/form-data, distinguishes a missing/no-selection upload from a named zero-byte upload, rejects more than one `photo`, enforces UploadedFile.size after parsing, and never combines form access with another request-body reader.",
+        "The implementation treats filename, extension, and declared content type as untrusted metadata, uses a server-generated storage identity outside a web root, and verifies bounded PNG signature, structure, and dimensions from the staged bytes before publication.",
+        "The implementation calls saveTo on a unique private staging path before request completion, cleans staging and quota/admission state on all failure paths, applies an explicit collision policy, and publishes with an application-owned atomic same-filesystem workflow or clearly fails when the required atomic primitive is unavailable.",
+        "The code never retains UploadedFile, asStream, or an asFile decoder path beyond the exchange and does not use asBytes or asString without a deliberately small prior size bound.",
+        "Tests cover a valid upload and post-response persistence, missing file, empty filename/zero bytes, named zero-byte file, repeated same-name parts, malicious filename, declared MIME/content mismatch, malformed or truncated multipart, fixed-length and chunked total oversize, interrupted upload cleanup, and concurrent duplicate client filenames without overwrite.",
+        "The project builds and the focused tests pass on Java 11."
+      ]
+    },
+    {
+      "id": "review-unsafe-existing-handler",
+      "prompt": "Review this Mu Server upload handler and give a concrete patch plan without changing code yet:\n\n```java\nserverBuilder\n    .withMaxRequestSize(Long.MAX_VALUE)\n    .addHandler(Method.POST, \"/upload\", (request, response, params) -> {\n        UploadedFile f = request.uploadedFile(\"file\");\n        executor.submit(() -> {\n            if (f.contentType().startsWith(\"image/\")) {\n                f.saveTo(new File(\"public/uploads/\" + f.filename()));\n            }\n        });\n        response.write(\"queued\");\n    });\n```\n\nThe service receives bursts of hundreds of browser multipart uploads and occasionally leaves corrupt or overwritten files. Explain the Mu-specific body, threading, temporary-file, and lifecycle behavior behind the failures; propose bounded storage, quota, validation, atomic publication, and cleanup semantics; and list focused black-box tests. We are on 2.4.1 today but expect to move to Mu Server 3. Preserve our existing build and do not add a library just to access uploads.",
+      "expected_output": "An evidence-based review identifying whole-multipart synchronous parsing, exchange-end decoder cleanup, unsafe post-request UploadedFile use, unbounded request/concurrency exposure, untrusted metadata, path/overwrite races, and a staged bounded design with accurate 2.4.1-versus-3 distinctions and comprehensive observable tests.",
+      "files": [],
+      "assertions": [
+        "The review explains that uploadedFile triggers complete multipart parsing and blocks a handler-executor thread until the full body is decoded; it does not describe UploadedFile.asStream as incremental network or per-part streaming.",
+        "It identifies single request-body ownership and exchange-end multipart decoder destruction, and explains that the background task races cleanup because UploadedFile, asStream, and decoder-backed asFile are request-scoped; saveTo must occur before handler/async completion.",
+        "It replaces Long.MAX_VALUE with a finite total encoded-body limit plus finite read-idle timeout, separates total-body, per-file, principal quota, retained-storage, validation-worker, and concurrent in-flight bounds, and notes that post-parse checks cannot prevent whole-body spooling.",
+        "It treats filename, content type, and extension as client claims; avoids the public web root and client-derived path; validates actual bytes with bounded processing; and covers active content or decompression/output amplification where relevant.",
+        "It proposes unique private staging, explicit permissions, a server-generated final identity, a documented collision policy, atomic same-filesystem publication, cleanup/reconciliation after every failure, and a janitor for abandoned staging without deleting committed files.",
+        "It recommends raw inputStream or AsyncHandle/RequestBodyListener only when the contract can stream raw bytes, states that an async listener runs on NIO threads and must use bounded offloading/backpressure, and does not propose an ad hoc multipart parser.",
+        "It treats Mu Server 3 as released, states that it keeps io.muserver:mu-server and the upload lifecycle, adds Jakarta REST UploadedFile[] support, and does not implement EntityPart, without inventing a final 3.x artifact version.",
+        "The test plan covers declared and chunked oversize bodies, multipart overhead, missing/repeated/empty files, hostile names, content mismatch, malformed/truncated bodies, interruption, persistence after completion, staging cleanup, quota release, and concurrent collisions followed by a healthy request."
+      ]
+    },
+    {
+      "id": "jakarta-rest-multiple-documents",
+      "prompt": "Create a Maven Java 11 application in this empty directory using the current stable Mu Server 3 release; verify the published io.muserver:mu-server version instead of guessing it. Use application-created singleton Jakarta REST resources on one RestHandler. POST /documents consumes multipart/form-data with required text field `caseId` and repeated file field `document`; accept 1-4 non-empty PDF files. Save accepted files for asynchronous scanning after the response, using private collision-safe quarantine and server IDs. Return 202 with those IDs. Add tests for binding, limits, lifecycle, cleanup, malicious metadata, and concurrent requests. Keep the bootstrap simple and build and test the project.",
+      "expected_output": "A runnable Mu Server 3 Jakarta REST application using source-backed UploadedFile collection binding, bounded whole-request parsing, request-lifetime persistence into private quarantine, server-controlled identities, asynchronous scan handoff by ID, thread-safe application-owned singletons, and comprehensive HTTP and storage tests.",
+      "files": [],
+      "assertions": [
+        "The Maven project compiles on Java 11, uses a verified published Mu Server 3 io.muserver:mu-server version, constructs application-owned singleton resources on exactly one RestHandler, and adds no dependency merely for multipart support.",
+        "The method consumes multipart/form-data and binds the repeated `document` field as a supported UploadedFile List or Collection; it does not use EntityPart, per-part @FormParam InputStream, a whole-body multipart reader, or change bootstrap for novelty.",
+        "The endpoint distinguishes missing and empty caseId, requires 1-4 actual file parts, rejects named zero-byte PDFs, handles repeated files intentionally, and configures/enforces finite total-body, per-file, idle-read, quota, and concurrent-validation limits including multipart overhead.",
+        "Every accepted UploadedFile is saved to a unique private quarantine path before the resource method returns; background scanning receives only server-controlled IDs/paths and never an UploadedFile, asStream, or decoder-backed File parameter.",
+        "Client filenames, extensions, and part content types are not used as storage names or proof of PDF content; bounded byte-level PDF validation occurs before availability, permissions are explicit, collisions cannot overwrite, and publication/metadata state has a defined atomic or recoverable order.",
+        "Application-owned singleton quota, staging, and scan services are thread-safe, use bounded queues, release state exactly once on failure/disconnect, delete rejected/partial quarantine, and include abandoned-staging reconciliation.",
+        "HTTP/storage tests cover missing and empty fields, 0/1/4/5 documents, repeated part order, empty filename and named empty file, hostile filenames, MIME/PDF mismatch, malformed multipart, declared and chunked oversize, interrupted request, 202 persistence after exchange completion, scan failure cleanup, and concurrent same-name uploads with unique IDs."
+      ]
+    }
+  ]
+}
