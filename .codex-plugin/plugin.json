@@ -1,0 +1,18 @@
+{
+  "name": "mu-server-agent-skills",
+  "version": "0.1.0",
+  "description": "Agent skills for building Java applications with mu-server",
+  "author": {
+    "name": "Daniel"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "mu-server Developer",
+    "shortDescription": "Build Java applications with mu-server.",
+    "longDescription": "Create and extend Java web applications using mu-server, including Jakarta REST applications.",
+    "developerName": "Daniel",
+    "category": "Developer Tools",
+    "capabilities": [],
+    "defaultPrompt": "Help me build an application with mu-server."
+  }
+}

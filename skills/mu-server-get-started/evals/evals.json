@@ -1,0 +1,49 @@
+{
+  "skill_name": "mu-server-get-started",
+  "evals": [
+    {
+      "id": "new-maven",
+      "prompt": "This directory is empty. Create a small Maven app on Java 17 using Mu Server. GET /hello should return `Hello, world`, and `/` should serve a simple HTML homepage. I want to edit the page directly from src/main/resources during development but have it work from the classpath after building. Use the current stable mu-server release and make the app straightforward to run.",
+      "expected_output": "A minimal Maven Java 17 application using the current stable io.muserver:mu-server release, an explicit port 8080, a direct /hello route, and a fileOrClasspath-backed index.html served at / without a redirect.",
+      "files": [],
+      "assertions": [
+        "The project compiles on Java 17 and has exactly one direct io.muserver:mu-server dependency at the current stable release, or 2.4.1 if online verification was unavailable.",
+        "The server binds explicitly to port 8080.",
+        "GET /hello returns status 200 and body Hello, world.",
+        "GET / returns status 200, has no Location header, and returns the generated index.html body.",
+        "The application uses ResourceHandlerBuilder.fileOrClasspath with src/main/resources/web and /web, and the homepage still works when the built app starts outside the project directory.",
+        "No Jakarta REST, JAX-RS, dependency-injection, logging implementation, or second web-framework dependency was added."
+      ]
+    },
+    {
+      "id": "new-gradle-groovy",
+      "prompt": "Set up a new Gradle project using the Groovy DSL and Java 17 for a lightweight mu-server site. Please use port 9090, return `Hello from Mu` from GET /hello, and serve an index page at the root from files in development or the classpath in the built app. Use the latest stable release and include a normal way to run it.",
+      "expected_output": "A runnable Gradle Groovy application with the application plugin, Java 17 toolchain, current stable mu-server dependency, explicit port 9090, a direct /hello route, and a root index page backed by fileOrClasspath.",
+      "files": [],
+      "assertions": [
+        "The project compiles on Java 17 and has exactly one direct io.muserver:mu-server dependency at the current stable release, or 2.4.1 if online verification was unavailable.",
+        "The build uses Groovy DSL, configures the application main class, and the server binds explicitly to port 9090.",
+        "GET /hello returns status 200 and body Hello from Mu.",
+        "GET / returns status 200, has no Location header, and returns the generated index.html body.",
+        "The application uses ResourceHandlerBuilder.fileOrClasspath with src/main/resources/web and /web, and the homepage still works when the built app starts outside the project directory.",
+        "No Jakarta REST, JAX-RS, dependency-injection, logging implementation, or second web-framework dependency was added."
+      ]
+    },
+    {
+      "id": "adapt-gradle-kotlin",
+      "prompt": "Extend the existing Gradle Kotlin/JVM app in this directory. Keep its Java level, mu-server version, package, port, and /health endpoint intact. Add GET /hello returning `Hello, Daniel` plus a static homepage at `/` that can be edited under src/main/resources and is packaged for classpath use. Build it and verify all three endpoints.",
+      "expected_output": "The existing Java 11 Gradle Kotlin application is adapted in place without changing mu-server 2.4.0 or port 8181; /health remains, /hello is added, and a fileOrClasspath index page is served directly at /.",
+      "files": [
+        "evals/files/adapt-gradle-kotlin"
+      ],
+      "assertions": [
+        "The existing Gradle Kotlin DSL, Java 11 toolchain, example package, io.muserver:mu-server version 2.4.0, and explicit port 8181 are preserved.",
+        "The existing GET /health endpoint still returns status 200 and body healthy.",
+        "GET /hello returns status 200 and body Hello, Daniel.",
+        "GET / returns status 200, has no Location header, and returns the generated index.html body.",
+        "The application uses ResourceHandlerBuilder.fileOrClasspath with src/main/resources/web and /web, and the homepage still works when the built app starts outside the project directory.",
+        "No duplicate server, entry point, mu-server dependency, Jakarta REST/JAX-RS integration, or unrelated framework was added."
+      ]
+    }
+  ]
+}

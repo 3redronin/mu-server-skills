@@ -1,0 +1,34 @@
+[
+  {
+    "query": "Can u bootstrap a mu-server site in this empty folder? Gradle is fine, I need /hello and an index.html.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add io.muserver:mu-server to this existing Java build and expose a lightweight GET endpoint without JAX-RS.",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I use fileOrClasspath so my Mu Server frontend works both from the checkout and from its packaged resources? Please implement it.",
+    "should_trigger": true
+  },
+  {
+    "query": "Build the smallest direct-handler MuServer app in Maven and prove it responds over HTTP.",
+    "should_trigger": true
+  },
+  {
+    "query": "The mu-server JAX-RS integration is returning the wrong media type for my @Produces resource; diagnose it.",
+    "should_trigger": false
+  },
+  {
+    "query": "Update the generated mu-server Javadocs and release notes for version 2.5.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use Jetty to make a Java 17 hello-world server on port 8080.",
+    "should_trigger": false
+  },
+  {
+    "query": "My static index.html is missing from a plain Gradle application that does not use mu-server; fix the resource task.",
+    "should_trigger": false
+  }
+]

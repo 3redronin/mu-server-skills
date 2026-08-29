@@ -1,0 +1,8 @@
+{
+  "name": "mu-server-agent-skills",
+  "version": "0.1.0",
+  "description": "Agent skills for building Java applications with mu-server",
+  "author": {
+    "name": "Daniel"
+  }
+}

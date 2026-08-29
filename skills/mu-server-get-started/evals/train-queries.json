@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Start a Maven Java 17 app with Mu Server, a hello endpoint, and an index page served from resources.",
+    "should_trigger": true
+  },
+  {
+    "query": "hey can you add muserver to this gradle app and give me a /ping route plus static files",
+    "should_trigger": true
+  },
+  {
+    "query": "This pom already has io.muserver:mu-server. Wire up the first handler and make the app runnable.",
+    "should_trigger": true
+  },
+  {
+    "query": "I want a tiny embedded Java HTTP server, specifically Mu Server, with a homepage and one GET route.",
+    "should_trigger": true
+  },
+  {
+    "query": "Serve src/main/resources/web while I'm developing, then use /web on the classpath in my mu-server jar.",
+    "should_trigger": true
+  },
+  {
+    "query": "Make me a Gradle Kotlin starter for mu server on Java 21; /hello is enough for now.",
+    "should_trigger": true
+  },
+  {
+    "query": "In the cloned mu-server repository, fix the HTTP/2 parser regression and add protocol tests.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a Jakarta JAX-RS resource and exception mapper to my application hosted by mu-server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a Spring Boot controller and serve static content from src/main/resources/static.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade this Maven project's compiler release from Java 11 to 17; it happens to depend on mu-server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a raw Netty channel handler for an HTTP upgrade request.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review the public API compatibility of ResourceHandlerBuilder in the mu-server library source.",
+    "should_trigger": false
+  }
+]
