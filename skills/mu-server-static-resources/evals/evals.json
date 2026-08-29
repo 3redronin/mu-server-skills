@@ -1,0 +1,52 @@
+{
+  "skill_name": "mu-server-static-resources",
+  "evals": [
+    {
+      "id": "harden-packaged-spa-fixture",
+      "prompt": "Harden the existing Maven Java 11 Mu Server 2.4.1 application in this directory without changing its dependency, package, port 8192, or /api/health contract. Keep the UI at /app, serve from src/main/resources/public while developing and the packaged /public classpath root otherwise. Allow only GET and HEAD on static paths; return 405 with Allow for POST. Disable directory listing. Give app.a1b2c3.js a one-year public immutable cache and keep index.html revalidatable, with nosniff on regular assets. Add an SPA fallback for extensionless /app navigation paths, but keep missing asset files and /api paths as 404. Build and test both source-directory and packaged working-directory launches, GET/HEAD/POST, the bare /app redirect, caching, a client route, a missing bundle, and API fall-through.",
+      "expected_output": "A scoped, ordered Mu Server static/SPA handler chain whose method, directory, cache, packaging, fallback, and 404 contracts are verified over HTTP in both file and classpath modes.",
+      "files": [
+        "evals/files/harden-static-app"
+      ],
+      "assertions": [
+        "The project compiles on Java 11 and preserves io.muserver:mu-server 2.4.1, package example, port 8192, one server, and GET /api/health returning 200 with body healthy.",
+        "The /app context contains an application-owned method guard before ResourceHandler; GET and HEAD fall through, while POST /app/index.html returns 405 with Allow listing GET and HEAD and does not serve the file.",
+        "ResourceHandlerBuilder.fileOrClasspath retains the configured source and classpath roots, directory listing is disabled, /app redirects to /app/, and GET /app/ serves the exact index in both a project-root launch and a launch where the source path is absent.",
+        "GET and HEAD for app.a1b2c3.js have the correct JavaScript content type, nosniff, and a public one-year immutable cache policy; HEAD has no response body. index.html remains revalidatable rather than immutable.",
+        "An extensionless path such as /app/orders/42 returns the SPA index for GET/HEAD, while /app/missing.a1b2c3.js and /api/missing remain 404 and are not rewritten to HTML.",
+        "A request for /app/docs/ does not expose a directory listing or the internal-note.txt filename.",
+        "HTTP tests assert status, body bytes, Content-Type, Cache-Control, X-Content-Type-Options, Location, Allow, and fall-through rather than only compiling the configuration."
+      ]
+    },
+    {
+      "id": "audit-static-http-semantics",
+      "prompt": "Review our Mu Server static download handler and its tests. The team assumes ResourceHandler automatically rejects non-GET methods, emits ETags, implements If-Range, returns 416 for invalid ranges, and supports multipart ranges. Verify those claims against the selected Mu version, then update tests and any application-owned method policy. Cover GET/HEAD/POST, If-Modified-Since, a single prefix/suffix/open-ended range, multiple and unsatisfiable ranges, gzip negotiation, and custom cache/security headers without changing download bytes.",
+      "expected_output": "A source-backed correction of the assumed ResourceHandler contract, a scoped GET/HEAD policy where required, and wire-level tests for validators, ranges, compression, and metadata.",
+      "files": [],
+      "assertions": [
+        "The review identifies the selected Mu Server major line and verifies behavior against implementation/tests rather than assuming generic static-server semantics.",
+        "It states that ResourceHandler itself can serve an existing resource for methods such as POST and that only HEAD suppresses the regular-file body; any 405/Allow behavior is implemented in an earlier application handler.",
+        "It records that Last-Modified and If-Modified-Since are supported, while ResourceHandler emits no ETag and does not process If-None-Match or If-Range.",
+        "It verifies one satisfiable range as 206 with exact Content-Range/body and records that multiple, malformed, and unsatisfiable ranges are ignored in favor of the full 200 response rather than 416 or multipart/byteranges.",
+        "It tests HEAD headers and empty body, invalid If-Modified-Since fall-through, and the interaction in which a matching If-Modified-Since produces 304 before Range processing.",
+        "It distinguishes ResourceType gzip eligibility from MuServerBuilder compression configuration, verifies Content-Encoding and Vary for negotiated gzip, and exercises range behavior with the intended Accept-Encoding policy.",
+        "Custom cache and security headers use ResourceCustomizer only for existing regular resources, preserve length/validator/range metadata, and are asserted over HTTP."
+      ]
+    },
+    {
+      "id": "upgrade-webjar-and-resource-paths",
+      "prompt": "Move our /docs static Swagger UI setup from Mu Server 2.4.1 to Mu Server 3. We currently depend on org.webjars:swagger-ui at a pinned version and mount classpathHandler('/META-INF/resources/webjars/swagger-ui/' + version). Show the appropriate Mu 3 ResourceHandlerBuilder API, decide whether explicit or metadata-discovered versioning is safer for our reproducible build, explain the supported metadata groups and failure cases, preserve io.muserver:mu-server coordinates, and test packaged startup plus the UI entry file. Also flag any static filename behavior around literal plus signs that needs an upgrade regression test.",
+      "expected_output": "A Mu Server 3 WebJar migration that preserves coordinates and dependency pinning, selects the correct WebJar overload with understood metadata behavior, and verifies packaged resource paths and relevant 2.x/3.x decoding differences.",
+      "files": [],
+      "assertions": [
+        "The answer treats Mu Server 3 as released, retains io.muserver:mu-server, and does not use io.muserver:mu3 or invent a final 3.x artifact number.",
+        "It uses webjarHandler('swagger-ui', version) for explicit deterministic selection or gives a justified one-argument choice; it explains that the WebJar remains an intentional org.webjars:swagger-ui runtime dependency.",
+        "It states that the two-argument overload maps to /META-INF/resources/webjars/swagger-ui/<version> and validates artifact/version as single path segments.",
+        "For one-argument discovery it identifies pom.properties under org.webjars and org.webjars.npm metadata, and describes missing metadata and multiple distinct versions as construction-time errors resolved by the explicit overload.",
+        "It explains that Mu 2.4.1's manual classpathHandler path remains the compatibility fallback and keeps the configured dependency version synchronized with the served path.",
+        "Packaged tests launch outside the source working directory and assert the actual UI entry filename, representative dependent assets, content types, caching, and 404 for a nonexistent resource.",
+        "The upgrade review tests filenames containing a literal plus, %2B, and spaces because 2.x form-style path decoding and 3.x URI path decoding differ."
+      ]
+    }
+  ]
+}

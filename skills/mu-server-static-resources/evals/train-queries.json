@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Put our compiled React app under /ui in this Mu Server service, with index.html from the classpath and hashed JS cached forever, but keep API 404s visible.",
+    "should_trigger": true
+  },
+  {
+    "query": "ResourceHandlerBuilder.fileOrClasspath works in IntelliJ but the packaged jar returns 404 when Kubernetes starts it from /opt. Diagnose the source selection.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our io.muserver static endpoint returns index.html for POST and HEAD behavior is confusing. Restrict it to the correct methods and add wire tests.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add Swagger UI's org.webjars dependency to this Mu Server 3 app and host its files at /docs with webjarHandler.",
+    "should_trigger": true
+  },
+  {
+    "query": "Video seeking against our Mu ResourceHandler is broken. Check 206, Content-Range, suffix ranges, invalid ranges, gzip, and validators.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you review the public files mounted with fileHandler? I want directory listing off, safe cache and MIME headers, and a clear read-only filesystem boundary.",
+    "should_trigger": true
+  },
+  {
+    "query": "Implement multipart upload to Mu Server and save each UploadedFile to our tenant storage area with quotas.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a Jakarta REST GET /products/{id} endpoint to this Mu Server app and serialize the result as JSON.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure nginx to serve /var/www directly; this service does not embed Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate an OpenAPI document from our Swagger annotations, but we already host the UI elsewhere.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use Murp to proxy /assets to our CDN origin and rewrite upstream cache headers.",
+    "should_trigger": false
+  },
+  {
+    "query": "Read a JSON configuration file from the Java classpath during application startup.",
+    "should_trigger": false
+  }
+]

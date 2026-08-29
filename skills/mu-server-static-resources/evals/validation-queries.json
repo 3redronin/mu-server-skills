@@ -1,0 +1,34 @@
+[
+  {
+    "query": "Mu's static directory page is exposing filenames. Turn listings off, keep index.html, and test the no-trailing-slash response without changing other handlers.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add a .wasm ResourceType to our muserver assets and make sure MIME, nosniff, gzip selection, Vary, and immutable caching are coherent.",
+    "should_trigger": true
+  },
+  {
+    "query": "After upgrading io.muserver:mu-server 2.4.1 to 3, static filenames containing + resolve differently. Review the path and MIME behavior and add regression tests.",
+    "should_trigger": true
+  },
+  {
+    "query": "We need the same /app files to be live from src/main/resources in dev and available inside the fat jar in prod. Set up and verify ResourceHandlerBuilder correctly.",
+    "should_trigger": true
+  },
+  {
+    "query": "Build an authenticated /reports/{id}/download handler that streams a private generated file after checking the current user.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add SameSite cookies and CSRF protection to our Mu Server browser login form.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure Maven Resources Plugin to filter application.properties before packaging.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Java HttpClient that resumes a download from an arbitrary third-party server using Range.",
+    "should_trigger": false
+  }
+]
