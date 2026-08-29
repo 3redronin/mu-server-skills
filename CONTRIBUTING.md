@@ -8,23 +8,7 @@ The canonical, provider-neutral content lives under `skills/`. Each immediate ch
 
 ```text
 skills/
-  mu-server-get-started/
-    SKILL.md
-    references/
-    evals/
-  mu-server-jaxrs/
-    SKILL.md
-    references/
-    evals/
-  mu-server-murp/
-    SKILL.md
-    references/
-    evals/
-  mu-server-swagger/
-    SKILL.md
-    references/
-    evals/
-  mu-server-upgrade/
+  mu-server-<topic>/
     SKILL.md
     references/
     evals/
@@ -34,7 +18,7 @@ skills/
 
 The `.codex-plugin/` and `.claude-plugin/` directories are packaging adapters. Do not fork the actual skill instructions by provider unless a host requires genuinely different behavior.
 
-This repository currently contains skills only. Adding an MCP server, connector, hook, or runtime dependency would change the product and should be discussed before implementation.
+This repository currently contains fourteen skills and no MCP server, connector, hook, or runtime dependency. Adding one of those components would change the product and should be discussed before implementation.
 
 ## Authoring skills
 

@@ -1,18 +1,28 @@
 {
   "name": "mu-server-skills",
-  "version": "0.1.0",
-  "description": "Agent skills for building Java applications with mu-server",
+  "version": "0.2.0",
+  "description": "Agent skills for building, testing, securing, upgrading, and operating Java applications with mu-server",
   "author": {
-    "name": "Daniel"
+    "name": "Daniel Flower",
+    "url": "https://github.com/3redronin"
   },
+  "homepage": "https://muserver.io/",
+  "repository": "https://github.com/3redronin/mu-server-skills",
+  "license": "MIT",
+  "keywords": ["java", "mu-server", "http", "jakarta-rest", "web-server"],
   "skills": "./skills/",
   "interface": {
-    "displayName": "mu-server Developer",
-    "shortDescription": "Build Java applications with mu-server.",
-    "longDescription": "Create and extend Java web applications using mu-server, including Jakarta REST applications.",
-    "developerName": "Daniel",
+    "displayName": "Mu Server Skills",
+    "shortDescription": "Build reliable Java services with Mu Server.",
+    "longDescription": "Create, test, secure, upgrade, and operate Java services with Mu Server, Jakarta REST, Murp, ACME, and related APIs.",
+    "developerName": "Daniel Flower",
     "category": "Developer Tools",
     "capabilities": [],
-    "defaultPrompt": "Help me build an application with mu-server."
+    "websiteURL": "https://muserver.io/",
+    "defaultPrompt": [
+      "Build a Java service with Mu Server.",
+      "Review this Mu Server application for production.",
+      "Upgrade this application to Mu Server 3."
+    ]
   }
 }

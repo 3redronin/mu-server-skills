@@ -1,8 +1,13 @@
 {
   "name": "mu-server-skills",
-  "version": "0.1.0",
-  "description": "Agent skills for building Java applications with mu-server",
+  "version": "0.2.0",
+  "description": "Agent skills for building, testing, securing, upgrading, and operating Java applications with mu-server",
   "author": {
-    "name": "Daniel"
-  }
+    "name": "Daniel Flower",
+    "url": "https://github.com/3redronin"
+  },
+  "homepage": "https://muserver.io/",
+  "repository": "https://github.com/3redronin/mu-server-skills",
+  "license": "MIT",
+  "keywords": ["java", "mu-server", "http", "jakarta-rest", "web-server"]
 }

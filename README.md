@@ -37,11 +37,20 @@ Plugin marketplaces and installation commands are still host-specific. Until thi
 
 ## Included skills
 
-- `mu-server-get-started` creates or adapts a Maven or Gradle application with a direct handler and static resources, then verifies it over HTTP.
+- `mu-server-acme` configures ACME HTTP-01 certificate issuance, renewal, persistence, and deployment with `mu-acme`.
+- `mu-server-async-streaming` builds bounded asynchronous responses, request streams, and server-sent events.
+- `mu-server-browser-security` reviews and configures CORS, CSRF defenses, cookies, browser headers, and proxy trust.
+- `mu-server-get-started` creates or adapts a Maven or Gradle application with a direct handler and static resources.
+- `mu-server-handlers` builds direct routes and middleware with `MuHandler`, `Routes`, and context handlers.
 - `mu-server-jaxrs` creates Jakarta REST APIs with application-owned singleton resources and explicit provider registration.
-- `mu-server-murp` adds and hardens Murp reverse-proxy handlers, including URI mapping, forwarding headers, upstream TLS, timeouts, and failure verification.
-- `mu-server-swagger` generates OpenAPI JSON and YAML from Swagger Core v3 annotations, directs annotation-free applications to Mu Server's built-in OpenAPI support, and can host Swagger UI from a WebJar on Mu Server 3.
-- `mu-server-upgrade` upgrades application dependencies across Mu Server versions, with focused guidance for the 1.x-to-2.x and 2.x-to-3.x boundaries.
+- `mu-server-murp` adds and hardens Murp reverse proxies, including routing, forwarding headers, TLS, timeouts, and client certificates.
+- `mu-server-production` covers listeners, TLS and mTLS, HTTP/2, limits, overload, shutdown, proxy trust, and observability.
+- `mu-server-static-resources` serves files, classpath assets, SPAs, downloads, and Mu Server 3 WebJars with explicit HTTP behavior.
+- `mu-server-swagger` adds Swagger Core v3 annotations and optionally hosts Swagger UI, while recognizing Mu Server's annotation-free OpenAPI support.
+- `mu-server-testing` builds real-server application tests for HTTP contracts, TLS, HTTP/2, streaming, concurrency, and shutdown.
+- `mu-server-upgrade` guides application upgrades, especially the 1.x-to-2.x and 2.x-to-3.x boundaries.
+- `mu-server-uploads` implements bounded multipart uploads, safe persistence, cleanup, and large-upload streaming.
+- `mu-server-websockets` builds direct WebSocket endpoints with bounded sends, fragmentation, lifecycle, and shutdown handling.
 
 After installation, ask your agent naturally, for example:
 
@@ -51,11 +60,11 @@ After installation, ask your agent naturally, for example:
 
 > Proxy `/backend` to an internal service with Murp while keeping `/health` local.
 
-> Document these endpoints with Swagger `@Operation` and `@Schema` annotations.
+> Review this service for production readiness, including TLS, overload, proxy trust, and graceful shutdown.
 
-> Host Swagger UI at `/api-docs` from a WebJar and point it at this service's OpenAPI JSON.
+> Serve this packaged SPA at `/app` with safe caching and real 404s for missing assets.
 
-> Upgrade this application from Mu Server 2 to 3 and preserve its HTTP contracts.
+> Add a bounded WebSocket endpoint and test disconnect and shutdown behavior.
 
 The agent can select the matching skill automatically; supported harnesses also let you select a skill explicitly.
 
