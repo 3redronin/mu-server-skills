@@ -1,0 +1,66 @@
+[
+  {
+    "query": "Add a direct /chat WebSocket to my Mu Server app with WebSocketHandlerBuilder and BaseWebSocket, including fragmented messages and clean shutdown.",
+    "should_trigger": true
+  },
+  {
+    "query": "My MuWebSocket onBinary worker sometimes reads corrupted bytes after calling DoneCallback; diagnose the buffer lifetime.",
+    "should_trigger": true
+  },
+  {
+    "query": "Implement Sec-WebSocket-Protocol negotiation in this muserver MuWebSocketFactory and preserve handler fall-through.",
+    "should_trigger": true
+  },
+  {
+    "query": "Three threads broadcast through MuWebSocketSession and memory grows when clients are slow. Add bounded serialized sends.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why does withMaxFramePayloadLength not stop a huge fragmented message in my io.muserver WebSocket endpoint?",
+    "should_trigger": true
+  },
+  {
+    "query": "Review BaseWebSocket ping, idle timeout, close status, onError, and disconnect cleanup in our feed service.",
+    "should_trigger": true
+  },
+  {
+    "query": "Drain active direct Mu Server WebSocket sessions before MuServer.stop and test close code 1001.",
+    "should_trigger": true
+  },
+  {
+    "query": "Will this WebSocketHandlerBuilder endpoint work over HTTP/2 extended CONNECT behind our ingress?",
+    "should_trigger": true
+  },
+  {
+    "query": "Add server-sent events to a Mu Server Jakarta REST resource so browsers receive one-way notifications.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure Murp to reverse-proxy WebSocket upgrade traffic to an upstream service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a browser WebSocket client in React and reconnect it with exponential backoff.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a Jakarta WebSocket @ServerEndpoint to a Tomcat application.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix the WebSocket frame decoder state machine inside the mu-server library and add protocol regression tests.",
+    "should_trigger": false
+  },
+  {
+    "query": "Serve index.html and a normal GET /health route from a new Mu Server application.",
+    "should_trigger": false
+  },
+  {
+    "query": "Tune Netty channel write-buffer watermarks for all HTTP responses in our custom server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain RFC 8441 extended CONNECT support across Java WebSocket client libraries in general.",
+    "should_trigger": false
+  }
+]

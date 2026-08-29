@@ -1,0 +1,66 @@
+[
+  {
+    "query": "The next Mu handler never runs when my websocket factory declines an upgrade. Check my direct Mu handler order and return values.",
+    "should_trigger": true
+  },
+  {
+    "query": "Build a wss endpoint with io.muserver that validates Origin and chooses one client-offered chat protocol.",
+    "should_trigger": true
+  },
+  {
+    "query": "I need to retain an inbound binary frame after allowing the next frame; use MuWebSocket's separate pull and release callbacks safely.",
+    "should_trigger": true
+  },
+  {
+    "query": "Messages from concurrent producers interleave after sendText(..., false) on MuWebSocketSession. Make the outbox safe.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our muserver WebSocket only stops receiving after one callback. Audit every DoneCallback path.",
+    "should_trigger": true
+  },
+  {
+    "query": "Test a BaseWebSocket endpoint for automatic mu pings, matching pongs, read timeout, and peer/server close races.",
+    "should_trigger": true
+  },
+  {
+    "query": "Adapt this Mu Server 2.4.1 direct WebSocket service to Mu Server 3 without changing its callback architecture.",
+    "should_trigger": true
+  },
+  {
+    "query": "A SIGTERM aborts all our io.muserver sockets despite a ten-second stop timeout. Implement application-owned draining.",
+    "should_trigger": true
+  },
+  {
+    "query": "Proxy ordinary REST and WebSocket paths through nginx; the backend happens to use Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use JAX-RS AsyncResponse for a long-running request in my muserver application.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write Kotlin Android code that connects to a WebSocket and parses incoming chat JSON.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review RFC 6455 close-code assignments for a language-neutral protocol specification.",
+    "should_trigger": false
+  },
+  {
+    "query": "Implement RFC 8441 support in Mu Server's Http2Connection class as a public library contribution.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add authentication middleware in front of all HTTP routes in this Mu Server app; there are no WebSocket endpoints.",
+    "should_trigger": false
+  },
+  {
+    "query": "Build a Spring WebFlux reactive WebSocket handler with bounded Flux backpressure.",
+    "should_trigger": false
+  },
+  {
+    "query": "Diagnose a Murp 502 while proxying an upstream that sometimes upgrades connections.",
+    "should_trigger": false
+  }
+]

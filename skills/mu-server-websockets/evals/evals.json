@@ -1,0 +1,58 @@
+{
+  "skill_name": "mu-server-websockets",
+  "evals": [
+    {
+      "id": "adapt-bounded-chat",
+      "prompt": "Harden the existing Maven Java 17 Mu Server 2.4.1 application in this directory without changing its dependency version, port 8189, /health response, ordinary GET /ws fallback, or single-server entry point. Keep direct WebSocketHandlerBuilder/BaseWebSocket architecture at /ws. Require the chat.v1 subprotocol and select it only when offered. Deliver each fragmented text message once as an uppercase logical message, echo fragmented binary as one logical message, set a 16 KiB incoming frame limit and a 64 KiB logical-message limit, and close oversized messages with 1009. Inbound callbacks must never block or leak demand/buffers. Add a per-session single-writer outbox bounded to 32 entries and 128 KiB, with deterministic overload/write-failure behavior and safe ByteBuffer ownership. Preserve BaseWebSocket ping and close behavior, make cleanup idempotent, track active sessions, and update shutdown so sockets receive 1001 with reason `Server shutting down` and get a bounded drain before server.stop. Build the app and verify the HTTP fallback, subprotocol, fragmented text/binary, ping/pong, peer close, and an unsupported subprotocol.",
+      "expected_output": "The supplied direct WebSocket application retains its HTTP behavior and gains compliant handshake selection, bounded fragmented-message processing and output, exact callback/buffer ownership, once-only cleanup, and an application-led WebSocket shutdown drain.",
+      "files": [
+        "evals/files/adapt-bounded-chat"
+      ],
+      "assertions": [
+        "The project still builds on Java 17 with exactly one io.muserver:mu-server dependency at 2.4.1, one server on port 8189, GET /health returning healthy, and ordinary GET /ws returning websocket endpoint.",
+        "The direct WebSocket handler remains at exact path /ws and creates a distinct BaseWebSocket per accepted connection; no Jakarta WebSocket, Spring, alternate server, or additional runtime dependency is introduced.",
+        "The factory inspects all comma-separated Sec-WebSocket-Protocol request values, returns exactly one chat.v1 response value only when offered, and rejects a candidate upgrade with no supported offer rather than falling through to ordinary GET /ws.",
+        "The handler configures a 16384-byte incoming frame limit, assembles fragments in order, emits uppercase HELLO exactly once for fragmented text, echoes the complete fragmented binary message, and enforces a cumulative 65536-byte logical-message limit with close code 1009.",
+        "Every inbound DoneCallback is completed exactly once on success, rejection, failure, and cancellation; Mu-owned binary storage is copied or retained/released correctly and no sent ByteBuffer is mutated or reused before its send callback.",
+        "Each session has a single-writer outbox bounded to both 32 entries and 131072 bytes; concurrent producers cannot interleave fragmented messages, and overload, send failure, close, and queue draining release ownership and complete pending work deterministically.",
+        "BaseWebSocket ping/pong and peer-close behavior is preserved, while peer close, onError, failed setup, send failure, application close, and shutdown converge on idempotent resource and registry cleanup.",
+        "Shutdown stops WebSocket admission, sends valid close code 1001 with UTF-8 reason Server shutting down to tracked sessions, waits only to a bounded deadline, cleans remaining session resources, and then invokes server.stop rather than assuming its HTTP grace period drains WebSockets.",
+        "The supplied verifier passes its HTTP, chat.v1 negotiation, unsupported-protocol rejection, fragmented text and binary, ping/pong, and peer-close checks."
+      ]
+    },
+    {
+      "id": "review-handshake-routing",
+      "prompt": "Review this proposed direct Mu Server WebSocket setup: a ContextHandler mounts /realtime, a static fallback is registered first, then a WebSocketHandlerBuilder uses withPath(\"/realtime/chat\"). Its factory accepts any request with a session cookie, ignores Origin, reads only headers().get(SEC_WEBSOCKET_PROTOCOL), and always returns Sec-WebSocket-Protocol: chat.v2 even when the client did not offer it. The HTTPS listener also enables HTTP/2, and the team says browsers will therefore use RFC 8441. Give a corrected handler order/path and handshake policy for an internet-facing browser chat endpoint. Explain exact fall-through versus HTTP rejection, all subprotocol-header forms, and what to verify on the wire. Keep direct Mu WebSockets; do not redesign it as REST or a different WebSocket framework.",
+      "expected_output": "A source- and RFC-grounded review that fixes context-relative routing and handler order, distinguishes decline from rejection, validates browser origin and authentication, negotiates one offered subprotocol, and explains Mu's HTTP/1.1-only direct WebSocket path despite HTTP/2 coexistence.",
+      "files": [],
+      "assertions": [
+        "The review places request-wide middleware first, the WebSocket handler before the static fallback, and uses context-relative withPath(\"/chat\") under ContextHandler /realtime.",
+        "It explains that Mu preselects exact-path GET requests whose Upgrade header contains websocket, the later handshaker checks Connection/Upgrade, key presence, and supported versions, ordinary non-upgrades and factory null fall through, and a policy failure for a candidate upgrade should produce an intentional HTTP error.",
+        "It identifies the delegated handshaker's draft-version 7/8 compatibility and key-presence-only check, enforcing one version 13 value and one valid 16-byte base64 key for a new strict RFC 6455 endpoint while preserving any explicitly required historical compatibility.",
+        "It retains session authentication/authorization and adds an explicit Origin allowlist policy for browser clients while treating absent Origin according to the endpoint's non-browser-client policy rather than as inherently trusted.",
+        "It parses every Sec-WebSocket-Protocol header occurrence and every comma-separated token, chooses exactly one supported token that was offered, sends the response header once, and omits or rejects when no protocol is selected according to whether chat.v2 is required.",
+        "It identifies an unoffered chat.v2 response as an RFC 6455 violation that compliant clients must fail, and does not advertise WebSocket extensions that Mu's handshaker has disabled.",
+        "It explains that factory code runs on Mu's handler executor, while established socket callbacks run on an NIO event loop and must not block.",
+        "It states that Mu direct WebSockets use an RFC 6455 HTTP/1.1 GET Upgrade with one connection per socket; HTTP/2 may coexist for normal requests, but Mu does not implement RFC 8441 extended CONNECT.",
+        "The verification plan covers exact and near-miss routes, non-upgrade fallback, null decline, authentication and Origin rejection, malformed/repeated/comma-separated supported and unsupported protocol offers, the 101 response value, missing or malformed keys, version 13 and 426 behavior, and HTTP/1.1 through the deployed proxy/ALPN path."
+      ]
+    },
+    {
+      "id": "diagnose-backpressure-shutdown",
+      "prompt": "Diagnose a Mu Server direct WebSocket feed that slowly grows memory and sometimes loses its final events. onBinary submits the received ByteBuffer to a worker and immediately calls onComplete; three producer threads call session.sendBinary with DoneCallback.NoOp, including multi-fragment messages; there is no queue limit. onError and onClientClosed both tear down the same subscription. The shutdown hook calls server.stop(10, SECONDS) and assumes every socket receives a clean close. Explain the failure mechanisms and propose a focused design and test plan using the existing Mu APIs. Include callback threads, the four-argument binary callback, frame versus message limits, write callbacks, close races, and HTTP/1.1/HTTP/2 reality.",
+      "expected_output": "A concrete diagnosis and redesign that connects Mu's inbound demand and retained storage, asynchronous zero-copy sends, unsynchronized fragmented output, unbounded channel queuing, terminal callback races, and HTTP-only shutdown wait to bounded ownership-aware session lifecycle controls.",
+      "files": [],
+      "assertions": [
+        "It explains that the three-argument binary onComplete both releases Mu-owned buffer storage and pulls the next frame, so using that ByteBuffer on a worker after completion is invalid; it proposes copying before completion or using the four-argument callback with exactly-once, bounded demand and release.",
+        "It distinguishes the handler-executor factory from NIO event-loop socket callbacks, requires nonblocking inbound callbacks, and notes that a closed-session write completion can run synchronously on the sending caller rather than guaranteeing one completion executor.",
+        "It explains that sendBinary wraps the ByteBuffer for an asynchronous write, so the buffer and backing bytes must remain unchanged until the callback, and replaces DoneCallback.NoOp where ownership, failure, or queue progress depends on completion.",
+        "It proposes a per-session single-writer queue bounded by entries and bytes, advances only from send completions, keeps each fragmented message contiguous, and defines deterministic admission, overload, write-failure, and drain behavior.",
+        "It explains that withMaxFramePayloadLength is an incoming per-frame limit with a 65536-byte default and 1024-byte minimum, not a logical-message or outgoing/queue limit, and adds cumulative size, fragment-count, and retained-memory bounds.",
+        "It makes cleanup idempotent across peer close, onError, write failure, application close, and disconnect, retains BaseWebSocket close/ping/error behavior where appropriate, uses valid close code/reason payloads, and stops new data admission after close starts.",
+        "It explains that server.stop waits for active HTTP requests rather than upgraded WebSockets, so shutdown must track sessions, stop admission, send 1001, wait to an application deadline, clean leftovers, and then stop Mu.",
+        "It states that direct Mu WebSockets are HTTP/1.1 RFC 6455 upgrades and do not use HTTP/2 RFC 8441 extended CONNECT, even when HTTP/2 is enabled for ordinary traffic.",
+        "The tests include delayed completion and release, buffer mutation/reuse, fragmented and cumulative-limit cases, concurrent producers and queue saturation, send failure/disconnect races, ping/pong and idle timeout, peer/server close, once-only cleanup, and application-led shutdown over the deployed HTTP/1.1 path."
+      ]
+    }
+  ]
+}
