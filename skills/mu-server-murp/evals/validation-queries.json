@@ -1,0 +1,42 @@
+[
+  {
+    "query": "Proxy server-sent events through Murp without buffering the response.",
+    "should_trigger": true
+  },
+  {
+    "query": "Make this UriMapper return null so unmatched requests reach later Mu handlers.",
+    "should_trigger": true
+  },
+  {
+    "query": "Stop untrusted clients spoofing Forwarded headers at our muserver reverse proxy.",
+    "should_trigger": true
+  },
+  {
+    "query": "Record body byte counts with a Murp ProxyListener safely.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our reverse proxy sends the public Host to an HTTPS virtual host and TLS requests fail.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add OpenAPI JSON to this Mu Server JAX-RS application.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use Apache HttpClient behind a corporate forward proxy.",
+    "should_trigger": false
+  },
+  {
+    "query": "Serve static files from a WebJar in Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Set up HAProxy in front of a Java service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a Jakarta REST request filter for authentication.",
+    "should_trigger": false
+  }
+]

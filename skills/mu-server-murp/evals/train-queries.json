@@ -1,0 +1,58 @@
+[
+  {
+    "query": "Add Murp to this Mu Server app and proxy requests to our backend service.",
+    "should_trigger": true
+  },
+  {
+    "query": "Configure io.muserver:murp ReverseProxyBuilder with a selective UriMapper.",
+    "should_trigger": true
+  },
+  {
+    "query": "Keep /health local but reverse proxy /api through Mu Server.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why does our Murp proxy return 502 for target disconnects and 504 for slow targets?",
+    "should_trigger": true
+  },
+  {
+    "query": "Harden Forwarded, X-Forwarded, Via, and Host handling in this Murp edge proxy.",
+    "should_trigger": true
+  },
+  {
+    "query": "Use a certificate-validating HttpClient and timeouts for this Murp HTTPS upstream.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add request and response interceptors to our Mu reverse proxy.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can the Murp handler proxy WebSocket upgrades?",
+    "should_trigger": true
+  },
+  {
+    "query": "Write an nginx reverse_proxy configuration for this service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Call an HTTP API from Java using HttpClient.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a direct /proxy-status route to this Mu Server app.",
+    "should_trigger": false
+  },
+  {
+    "query": "Build an API gateway with Spring Cloud Gateway.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure the HTTPS_PROXY environment variable for Maven.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade this application from Mu Server 2 to Mu Server 3.",
+    "should_trigger": false
+  }
+]

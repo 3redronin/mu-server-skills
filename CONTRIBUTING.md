@@ -16,6 +16,10 @@ skills/
     SKILL.md
     references/
     evals/
+  mu-server-murp/
+    SKILL.md
+    references/
+    evals/
   mu-server-swagger/
     SKILL.md
     references/

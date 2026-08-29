@@ -1,0 +1,47 @@
+{
+  "skill_name": "mu-server-murp",
+  "evals": [
+    {
+      "id": "add-selective-proxy",
+      "prompt": "Extend this existing Maven Java 17 Mu Server 2.4.1 application. Keep port 8187 and GET /health unchanged. Add the current stable Murp release and proxy only /backend and its descendants to the supplied target app at http://127.0.0.1:9191, retaining the raw path and query. Non-matching requests must fall through. This proxy is directly internet-facing, the target expects its own Host header, legacy X-Forwarded headers are not needed, Via should identify edge-proxy, and the total timeout must be one second. Do not change the supplied target helpers. Build and run the processes, then verify encoded paths and queries, a POST body, spoofed Forwarded input, timeout behavior, a pre-response target transport failure, and the unchanged local route.",
+      "expected_output": "The existing application gains one selective Murp handler with explicit trust, Host, Via, and timeout policy, while /health stays local and runtime checks demonstrate preserved proxy data plus 502 and 504 failure behavior.",
+      "files": [
+        "evals/files/add-selective-proxy"
+      ],
+      "assertions": [
+        "The project still compiles on Java 17 with io.muserver:mu-server 2.4.1 and one exact current stable io.muserver:murp dependency, or Murp 1.2.2 if release metadata was unavailable.",
+        "The existing Main entry point, port 8187, and GET /health response remain unchanged, and no second server is added to Main.",
+        "Only /backend and its descendants are proxied; another unmatched path returns 404 by mapper fall-through, while the target receives the original raw encoded path and query.",
+        "The proxy streams a POST body unchanged and the target observes its own Host, a Via value identifying edge-proxy, no legacy X-Forwarded-For, and no caller-supplied spoofed Forwarded element.",
+        "The configuration uses a one-second total timeout; a pre-response target delay returns 504 Gateway Timeout and a pre-response target transport failure returns 502 Bad Gateway.",
+        "No unrelated framework, dependency-injection container, application JSON provider, or logging implementation is added."
+      ]
+    },
+    {
+      "id": "harden-https-upstream",
+      "prompt": "Review this Murp configuration for a public Mu Server edge proxy to https://orders.internal. The code relies on ReverseProxyBuilder's default HttpClient, preserves incoming Forwarded headers, forwards the public Host, and has no explicit timeouts. The upstream certificate and hostname must be verified, it expects Host orders.internal and legacy X-Forwarded-* headers, and callers are untrusted. Give a focused corrected configuration and a verification plan without changing the URI mapping or server listener.",
+      "expected_output": "A focused hardening that supplies a validating JDK HttpClient, discards untrusted forwarding input, uses the target authority for Host, enables required legacy headers, and makes connection and total timeouts explicit.",
+      "files": [],
+      "assertions": [
+        "It identifies that Murp's implicit default client trusts target certificates and supplies ReverseProxyBuilder.createHttpClientBuilder(false) or an equivalently validating HttpClient.",
+        "It configures a connection timeout on the HttpClient and a separate total exchange timeout with withTotalTimeout, without inventing a Murp idle-timeout API.",
+        "It uses discardClientForwardedHeaders(true), explains the trust-boundary reason, and enables sendLegacyForwardedHeaders(true) because the target explicitly requires those headers.",
+        "It uses proxyHostHeader(false) so the JDK client supplies orders.internal as Host, while explaining that forwarding the original Host is otherwise Murp's default.",
+        "It preserves the existing URI mapping and listener and verifies valid TLS, certificate or hostname rejection, target-observed forwarding headers, Host, Via, and timeout behavior."
+      ]
+    },
+    {
+      "id": "diagnose-proxy-failures",
+      "prompt": "Diagnose a Murp service where a refused upstream connection returns 502, a slow upstream returns 504, and a target that disconnects halfway through a response causes the client stream to fail instead of receiving a new 502. Is this expected? Explain the response-state distinction, which timeout Murp applies, what to test over HTTP/1.1 and HTTP/2, and where interceptors or listeners can observe or alter the exchange.",
+      "expected_output": "An explanation that pre-commit transport failures and total timeouts map to 502 and 504, while a committed response cannot have its status replaced and must terminate, with accurate interceptor and listener boundaries.",
+      "files": [],
+      "assertions": [
+        "It explains that a target transport failure before response commitment produces 502 Bad Gateway and a total timeout before commitment produces 504 Gateway Timeout.",
+        "It explains that after headers or body bytes are committed Murp cannot synthesize a replacement status and terminates the HTTP/1.1 response or HTTP/2 stream.",
+        "It identifies withTotalTimeout as covering the full exchange including body streaming and does not confuse it with the HttpClient connection timeout.",
+        "It proposes observable tests for reusable HTTP/1.1 connections and HTTP/2 stream failure without unnecessarily destroying the whole HTTP/2 connection.",
+        "It states that request and response interceptors can change headers or pre-send status but cannot inspect or replace streamed bodies, while ProxyListener and completion listeners provide observation callbacks."
+      ]
+    }
+  ]
+}
