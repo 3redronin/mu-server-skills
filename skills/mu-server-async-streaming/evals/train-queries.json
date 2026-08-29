@@ -1,0 +1,50 @@
+[
+  {
+    "query": "My Mu Server download handler uses request.handleAsync(), but large files corrupt when I reuse the ByteBuffer. Fix the write pump and cancellation.",
+    "should_trigger": true
+  },
+  {
+    "query": "POST /ingest uses RequestBodyListener and stalls after the first chunk whenever work is offloaded. Can you debug the DoneCallback lifecycle?",
+    "should_trigger": true
+  },
+  {
+    "query": "Build a direct Mu Server EventSource endpoint with AsyncSsePublisher, event IDs, keepalive comments, and clean disconnect handling.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our direct mu-server stream queues a million AsyncHandle.write calls when a mobile client is slow. Bound memory without blocking the socket thread.",
+    "should_trigger": true
+  },
+  {
+    "query": "Should this Mu Server one-way browser notification feed use SSE or WebSocket? We need reconnect and resume from the last delivered event.",
+    "should_trigger": true
+  },
+  {
+    "query": "complete(Throwable) still leaves an expensive report generator running after the client closes; trace the async response completion paths.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add a Jakarta REST @GET endpoint with SseEventSink and an SseBroadcaster to my mu-server API.",
+    "should_trigger": false
+  },
+  {
+    "query": "My normal Mu RouteHandler calls response.write once and returns; add a content type and unit test.",
+    "should_trigger": false
+  },
+  {
+    "query": "Implement a bidirectional binary WebSocket protocol with ping/pong in Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Serve this 4 GB static video efficiently with ResourceHandlerBuilder and range requests.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix the AsyncHandle implementation inside the cloned mu-server library and preserve its public binary compatibility.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use Java Flow.Publisher to process records asynchronously in a command-line application that does not run Mu Server.",
+    "should_trigger": false
+  }
+]

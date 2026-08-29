@@ -1,0 +1,50 @@
+{
+  "skill_name": "mu-server-async-streaming",
+  "evals": [
+    {
+      "id": "repair-direct-streaming-fixture",
+      "prompt": "Repair the existing Maven Java 11 Mu Server application in this directory without changing its io.muserver:mu-server 2.4.1 dependency, package, port 8184, or /health contract. POST /mirror corrupts or truncates larger bodies because it releases request buffers before asynchronous response writes own them. GET /events queues all AsyncSsePublisher operations and closes immediately instead of respecting their completion. Fix both direct handlers with bounded one-at-a-time flow, exact terminal handling, and no per-request thread. Build the app and verify binary mirror integrity plus the exact finite SSE stream and headers.",
+      "expected_output": "The existing direct-handler app preserves its build and routes, mirrors arbitrary binary request bodies by coupling request demand to response-write completion, and publishes the finite SSE sequence through a serialized completion chain before closing.",
+      "files": [
+        "evals/files/adapt-maven-async-streaming"
+      ],
+      "assertions": [
+        "The project compiles on Java 11 and preserves io.muserver:mu-server 2.4.1, package example, port 8184, one server, and GET /health returning status 200 with body healthy.",
+        "POST /mirror returns a multi-megabyte binary body byte-for-byte and succeeds for parallel requests.",
+        "Each RequestBodyListener buffer remains owned until its response write finishes; its DoneCallback is called exactly once via the write completion, and no blocking MuResponse writer is used in async mode.",
+        "Normal end-of-input completes the response only after all acknowledged writes; read or write failure enters one terminal path without appending a second error body to a committed stream.",
+        "GET /events returns status 200, Content-Type text/event-stream, Cache-Control containing no-cache and no-transform, then a ready comment, retry 2000, and exactly three ordered tick events with IDs 1 through 3 and values value-1 through value-3.",
+        "SSE operations are serialized from their completion stages, close happens after the final operation, failure also closes, and no per-request Thread or unbounded send loop is introduced."
+      ]
+    },
+    {
+      "id": "fix-large-report-pump",
+      "prompt": "Our direct MuHandler streams a generated 10 GB report with request.handleAsync(). It currently clears and refills the same 64 KiB ByteBuffer immediately after handle.write(buffer), submits thousands of writes from a producer loop, and calls complete() when submission ends. Under a slow client memory climbs and report bytes are duplicated. Refactor the handler into a bounded asynchronous pump, preserve status and download headers, stop generation on write failure or client disconnect, and add focused tests for a slow reader, final partial buffer, generator failure before and after commitment, and HTTP/1.1 plus HTTP/2.",
+      "expected_output": "A direct-handler report pump with response metadata set before output, one reusable buffer and one write in flight, completion only after the last successful write, idempotent cancellation, and protocol-level tests that demonstrate byte order and cleanup.",
+      "files": [],
+      "assertions": [
+        "The implementation calls handleAsync, keeps the general MuHandler terminal, and sets status/content type/content-disposition before the first write without declaring an unknown Content-Length.",
+        "At most one write is in flight; the same ByteBuffer is not cleared, refilled, or mutated until the previous write callback or future completes.",
+        "The next report read/generation step begins from write completion rather than from an eager producer loop, so a slow client bounds queued response memory.",
+        "Normal completion follows the final successful write, while producer and write failures stop the source and use one idempotent terminal path; an error body is not written after response commitment.",
+        "A response-completion listener is registered before generation and cancels generation/resources on unsuccessful completion or when further work is no longer useful.",
+        "Tests assert exact bytes and order for more than one buffer and a partial final buffer, apply slow-reader pressure, verify pre/post-commit failure behavior and cleanup, and exercise HTTP/1.1 and HTTP/2 where configured."
+      ]
+    },
+    {
+      "id": "review-mu-server-3-sse-migration",
+      "prompt": "Review a Mu Server 2.4.1 to Mu Server 3 migration for notifications. /alerts is a direct RouteHandler using AsyncSsePublisher; two application executors currently call send concurrently, it emits no keepalive, ignores Last-Event-ID, and leaves its subscription active after a browser disconnects. A separate Jakarta REST resource uses SseEventSink and SseBroadcaster. Explain and sketch the direct-handler fixes, the observable tests, which lifecycle behavior actually changes in Mu Server 3, and where the Jakarta REST portion belongs. Treat Mu Server 3 as released and keep io.muserver:mu-server coordinates.",
+      "expected_output": "An evidence-based migration review that hardens the direct publisher with serialized bounded sends, replay/reconnect and completion cleanup, distinguishes unchanged direct APIs from Mu Server 3's Jakarta REST SSE fixes, and routes rather than conflates the REST work.",
+      "files": [],
+      "assertions": [
+        "The review treats Mu Server 3 as released, keeps io.muserver:mu-server coordinates, and identifies Java 11 minimum, SLF4J 2, and relevant JSpecify nullness additions.",
+        "It does not claim the major upgrade makes concurrent direct AsyncSsePublisher sends bounded or transactional; it proposes one serialized completion chain or bounded per-client queue with explicit overload behavior.",
+        "It registers direct response completion before upstream work, cancels the subscription/keepalive/queue on all terminal paths, treats failed send stages as terminal, and avoids blocking completion callbacks.",
+        "It uses event IDs plus the Last-Event-ID request header for a defined replay policy, explains that retry is advisory, and explains that server close normally reconnects EventSource while a client close or subsequent HTTP 204 stops it.",
+        "It preserves Mu's text/event-stream and no-cache,no-transform headers, does not add Connection or Transfer-Encoding, and serializes shared-scheduler comment keepalives through the event queue.",
+        "It identifies Mu Server 3's closed-state, cascading-close, and at-most-once concurrent callback corrections as Jakarta REST SseEventSink/Response/SseBroadcaster behavior, and points that portion to mu-server-jaxrs if available without assuming installation.",
+        "Tests cover exact UTF-8 framing and blank lines, multiline data, ordered IDs, reconnect/replay, slow-client bounds, keepalive cancellation, disconnect cleanup, and concurrent close/send behavior for the relevant direct and Jakarta REST APIs."
+      ]
+    }
+  ]
+}

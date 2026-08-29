@@ -1,0 +1,34 @@
+[
+  {
+    "query": "hey, my muserver async upload echo sometimes mangles chunks and the RequestBodyListener callback order looks odd—can you repair it?",
+    "should_trigger": true
+  },
+  {
+    "query": "Review this direct AsyncSsePublisher price feed: several threads send at once and disconnected tabs keep their database subscriptions.",
+    "should_trigger": true
+  },
+  {
+    "query": "A slow HTTP/2 consumer makes our handleAsync export exhaust memory even though writes return futures. Diagnose the backpressure mistake.",
+    "should_trigger": true
+  },
+  {
+    "query": "Implement Last-Event-ID replay and a shared-scheduler heartbeat for a Mu Server RouteHandler consumed by browser EventSource.",
+    "should_trigger": true
+  },
+  {
+    "query": "The @Suspended AsyncResponse in my Jakarta REST resource resumes with the wrong media type on Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a synchronous MuHandler that streams five small text chunks with response.sendChunk.",
+    "should_trigger": false
+  },
+  {
+    "query": "Compare WebSocketHandlerBuilder configuration for text and binary frames; we already require two-way messaging.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade this mu-server app from 2.x to 3 and audit Jakarta REST providers, cookies, URI matching, and shutdown behavior.",
+    "should_trigger": false
+  }
+]
