@@ -43,6 +43,21 @@
         "Twenty concurrent GET /api/count requests all return status 200 and collectively produce the unique integers 1 through 20, demonstrating thread-safe shared singleton state.",
         "No duplicate server, entry point, mu-server dependency, direct Jakarta REST API, dependency-injection container, or alternate JAX-RS implementation was added."
       ]
+    },
+    {
+      "id": "review-mu3-upgrade",
+      "prompt": "Review an upgrade of a mu-server 2.4.1 Jakarta REST application to the Mu Server 3 preview. The current app owns singleton resource and Jackson provider instances, explicitly registers the problem-details mapper for Throwable, relies on reader interceptors running in addition order despite their @Priority values, accepts repeated tags as List<String>, and starts through MuServerBuilder. Explain the necessary platform changes, which source/configuration can stay, which behavior changes, and the focused HTTP tests to run. Also explain when RestHandlerBuilder.fromApplication or SeBootstrap would be appropriate; do not change the bootstrap just for novelty.",
+      "expected_output": "A version-specific upgrade review grounded in Mu Server 3's Java, Jakarta REST, logging, bootstrap, exception, provider, interceptor, and parameter behavior while preserving singleton ownership and the existing direct builder where it remains suitable.",
+      "files": [],
+      "assertions": [
+        "The review identifies Java 11 minimum, Jakarta REST 3.1, SLF4J 2, unchanged io.muserver coordinates and Java packages, and the need for an SLF4J 2 provider.",
+        "It preserves application-owned singleton resources and does not propose constructor or field injection, per-request resource classes, or classpath scanning.",
+        "It explains that Mu Server 3 registers the Throwable problem-details mapper by default, that more-specific application mappers still win, and that removing the default Throwable registration restores the HTML fallback.",
+        "It explains that Mu Server 3 applies @Priority ordering, including ascending reader-interceptor priority, instead of preserving the 2.x addition-dependent behavior.",
+        "It keeps the existing List<String> repeated-parameter contract instead of changing it merely because Mu Server 3 adds object-array support; any suggested array replacement must respect the unsupported primitive-array and @PathParam-array boundaries.",
+        "It explains that direct MuServerBuilder and RestHandlerBuilder registration remain valid; fromApplication supports singleton resources and provider classes but not per-request resource classes, while SeBootstrap requires explicit Mu RuntimeDelegate selection.",
+        "It calls for focused observable tests of problem response status/content type/body, provider choice, interceptor order, repeated parameters, and any exact URI, Location, cookie, SSE, or shutdown behavior the application relies on."
+      ]
     }
   ]
 }

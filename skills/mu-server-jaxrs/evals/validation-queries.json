@@ -20,6 +20,14 @@
     "should_trigger": true
   },
   {
+    "query": "Why did my @Priority filter ordering and default REST error response change after moving muserver from 2.x to 3?",
+    "should_trigger": true
+  },
+  {
+    "query": "Start this Mu Server 3 JAX-RS Application with SeBootstrap on an explicit port.",
+    "should_trigger": true
+  },
+  {
     "query": "Add a plain mu-server /ping handler without annotations or REST resources.",
     "should_trigger": false
   },

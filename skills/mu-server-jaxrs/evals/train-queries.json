@@ -32,6 +32,14 @@
     "should_trigger": true
   },
   {
+    "query": "Upgrade my mu-server 2 REST app to Mu Server 3 and check the changed exception mapper, provider, and interceptor behavior.",
+    "should_trigger": true
+  },
+  {
+    "query": "Use RestHandlerBuilder.fromApplication but keep my Jakarta REST resource instances as singletons.",
+    "should_trigger": true
+  },
+  {
     "query": "Create a tiny direct MuHandler GET route and serve an index.html from the classpath.",
     "should_trigger": false
   },
