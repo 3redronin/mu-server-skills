@@ -72,7 +72,9 @@ For outgoing fragments, the two-argument send overloads produce a final single-f
 - outbound frame or message sizes; or
 - application queues and retained buffers.
 
-Set an application logical-message limit and close with `1009` when it is exceeded. Decide whether to accumulate text by characters or encoded UTF-8 bytes, then make the limit and tests match. Current focused Mu tests demonstrate ASCII fragmentation; source decodes each text frame to a String separately, so explicitly test a multi-byte UTF-8 code point crossing a frame boundary if that behavior matters.
+Set an application logical-message limit and close with `1009` when it is exceeded. Decide whether to accumulate text by characters or encoded UTF-8 bytes, then make the limit and tests match. Mu decodes each text frame to a `String` separately instead of decoding the complete fragmented message as one UTF-8 sequence. A code point split across frame boundaries therefore cannot be faithfully reconstructed through the direct text callback. If arbitrary RFC 6455 fragmentation must interoperate for such text, use a binary application protocol or resolve the limitation in Mu itself; an application test with a split multi-byte code point should expose the boundary rather than assuming string concatenation repairs it.
+
+A decoder-level frame-size violation is transport/parser behavior, not the same path as an application logical-message limit. In Mu 2.4.1 with its resolved Netty line, a peer can observe an immediate transport close instead of receiving the decoder's intended `1009` Close frame. Application-detected logical oversize can send `1009` reliably before closing. Test the observable frame-limit behavior with the exact resolved Mu/Netty version and avoid making the Close frame itself a portable application contract unless that combination proves it.
 
 RFC 6455 permits control frames between data fragments but forbids fragmented control frames. Ping, pong, and Close payloads are at most 125 bytes. Keep ping/pong payloads within that limit and keep a Close reason within 123 UTF-8 bytes after the two-byte status code.
 
