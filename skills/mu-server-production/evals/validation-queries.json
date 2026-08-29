@@ -1,0 +1,34 @@
+[
+  {
+    "query": "Before this muserver jar goes live, review every exposed listener and give us explicit TLS, body/header limits, overload, and graceful termination settings with live probes.",
+    "should_trigger": true
+  },
+  {
+    "query": "Clients can spoof X-Forwarded-For and poison redirects in our Mu Server behind nginx. Fix the trust boundary and test both the nginx path and direct access.",
+    "should_trigger": true
+  },
+  {
+    "query": "Rotate api.example.com's certificate in the running MuServer, verify SNI and ALPN on a fresh connection, and alert on expiry.",
+    "should_trigger": true
+  },
+  {
+    "query": "We see 431, 429 and 503 responses from io.muserver during traffic spikes. Make rejections observable and check our limits and executor capacity.",
+    "should_trigger": true
+  },
+  {
+    "query": "Write a Jakarta REST exception mapper for validation errors in our Mu Server API and return problem+json.",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate OpenAPI YAML from our Mu Server JAX-RS annotations and host Swagger UI at /docs.",
+    "should_trigger": false
+  },
+  {
+    "query": "The HTTPS target behind our Murp ReverseProxyBuilder rejects its proxy client certificate; repair the upstream HttpClient SSLContext.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a generic Kubernetes Deployment with CPU and memory limits for this Java application; it does not use Mu Server.",
+    "should_trigger": false
+  }
+]

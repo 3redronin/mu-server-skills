@@ -1,0 +1,48 @@
+{
+  "skill_name": "mu-server-production",
+  "evals": [
+    {
+      "id": "public-tls-mu3",
+      "prompt": "Our existing Maven service embeds Mu Server 3 and is about to be exposed directly on api.example.com. Harden its listener for production: fixed 80/443 ports, our PKCS12 identity from the existing secret loader, HTTP/2, HTTP redirect plus HSTS, mandatory partner client certificates, hot certificate rotation, bounded overload behavior, graceful Kubernetes termination, and useful TLS/connection metrics. Keep the existing routes and dependencies. Explain and run realistic verification without using trust-all clients.",
+      "expected_output": "A focused Mu Server 3 production configuration and lifecycle adaptation with explicit listener/TLS/client-auth/HTTP2/capacity values, safe rotation and drain integration, observability, and wire-level verification.",
+      "files": [],
+      "assertions": [
+        "The result preserves existing routes and versions, uses fixed explicit listeners and a real supplied HttpsConfigBuilder rather than unsignedLocalhost, and does not add ACME, Murp, CORS, CSRF, or unrelated framework work.",
+        "The Mu Server 3 configuration explicitly uses ClientCertificateAuthentication.MANDATORY with an appropriate client trust manager and distinguishes TLS trust validation from application authorization.",
+        "HTTP/2 is explicitly enabled with a finite max-concurrent-stream setting and verification proves ALPN h2 plus HTTP/1.1 fallback using the real hostname and certificate validation.",
+        "Redirect/HSTS behavior is tested without following redirects, including GET or HEAD, a non-idempotent method, the exact Location authority, HTTPS-only HSTS, and a justified decision about includeSubDomains/preload.",
+        "Certificate rotation is verified on a new TLS connection for identity and mTLS policy while service remains available, and failure to build replacement configuration does not discard the prior identity.",
+        "Executor saturation has a deterministic bounded rejection path with observable 503s, while the shutdown flow removes readiness, drains an in-flight request inside the platform deadline, rejects new connections, and interprets the Mu Server 3 stop result correctly.",
+        "Metrics cover MuStats, response completion, protocol rejection, active-connection TLS/protocol data, and certificate expiry without logging credentials, bodies, or full certificates."
+      ]
+    },
+    {
+      "id": "trusted-ingress-boundary",
+      "prompt": "Review this Java 17 Mu Server app before we put it behind an HTTPS load balancer. The LB connects to Mu over HTTP on port 8181 and sends Forwarded plus X-Forwarded-* headers. The app currently binds everywhere, uses request.clientIP() for per-IP rate limits, builds redirects from request.uri(), and exposes raw server.stats() plus activeConnections() at /metrics. Make the deployment safe and give us spoofing and observability tests. The LB owns certificates and HSTS.",
+      "expected_output": "A private fixed listener and explicit ingress trust contract that prevents forwarding-header bypass, uses forwarding metadata only after immediate-peer trust, keeps public TLS duties at the load balancer, and exposes bounded aggregate telemetry.",
+      "files": [],
+      "assertions": [
+        "The result binds an explicit fixed HTTP listener to the intended private interface/network, disables unused HTTPS, and does not add a self-signed Mu HTTPS listener, HSTS, or public certificate handling when the load balancer owns them.",
+        "It states that request.clientIP() and request.uri() consume unauthenticated forwarding claims and that Forwarded takes precedence over X-Forwarded-*; it does not treat parsing as trust.",
+        "The design restricts direct listener access, requires the ingress to strip client forwarding headers and emit canonical values, verifies the immediate socket peer, and allowlists authorities used for redirects.",
+        "Tests send spoofed forwarding and Host values through the ingress and through any attempted direct path, proving the observed client identity, scheme, host, redirect authority, and rate-limit bucket.",
+        "The rate limiter is described as per-process rather than a distributed quota, and the result selects the load balancer or a validated application identity for globally meaningful abuse control.",
+        "The public raw MuStats/activeConnections exposure is replaced or protected with aggregate, low-cardinality metrics that omit addresses, certificates, headers, request objects, and bodies."
+      ]
+    },
+    {
+      "id": "mu2-overload-shutdown-incident",
+      "prompt": "Diagnose and fix the production controls in our io.muserver:mu-server 2.4.1 service. During bursts it creates hundreds of handler threads, slow uploads linger, some large requests are accepted, and our shutdown alert says every clean deploy failed. Keep Java 11 and Mu 2.4.1. Add explicit limits/timeouts and bounded overload behavior, then prove 413/414/431/408/429/503 paths, graceful drain, and rejection telemetry. Do not change application endpoint behavior.",
+      "expected_output": "A Mu Server 2.4.1-specific capacity and lifecycle correction with workload-derived explicit controls, bounded executor/rate limits, exact rejection verification, and correct handling of the known reversed shutdown boolean.",
+      "files": [],
+      "assertions": [
+        "The result preserves Java 11, Mu Server 2.4.1, and application endpoints while making URL, header, request-body, request-body-idle, connection-idle, executor, queue, and drain values explicit and justified from traffic or clearly marked for load-test calibration.",
+        "The custom handler executor is bounded and uses rejection that throws RejectedExecutionException, avoiding caller-runs and silent discard behavior; saturation produces an observable 503 and increments rejectedDueToOverload.",
+        "Boundary tests cover just-below and over-limit URLs, headers, fixed-length and chunked bodies, a stalled upload, a rate-limit breach, and executor saturation, asserting the relevant 414, 431, 413, 408, 429, and 503 behavior without requiring identical HTTP/1.1 and HTTP/2 bodies.",
+        "The result distinguishes per-process 429 rate limiting from 503 capacity rejection and does not trust request.clientIP() without a validated forwarding boundary.",
+        "Shutdown tests prove new connections are refused and cover an in-flight request that drains plus one that exceeds the deadline; reporting accounts for Mu Server 2.4.1 returning false when clean and true on timeout.",
+        "Protocol rejections use addRequestRejectListener, ordinary completions use addResponseCompleteListener, and callbacks/logs are bounded and redact untrusted or sensitive request data."
+      ]
+    }
+  ]
+}

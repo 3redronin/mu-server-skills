@@ -1,0 +1,50 @@
+[
+  {
+    "query": "We're putting our embedded Mu Server service on the public internet next week. Lock down HTTPS, h2, request limits, overload, shutdown, and monitoring.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you productionize this io.muserver app for Kubernetes? It needs a fixed private port behind an ALB, safe Forwarded handling, readiness drain, and connection metrics.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our MuServerBuilder uses httpsServer() with no HTTPS config. Replace the test cert, require partner mTLS, and make cert rotation safe without downtime.",
+    "should_trigger": true
+  },
+  {
+    "query": "mu-server starts returning 503 under load and slow uploads hang around forever; tune the handler executor and protocol timeouts and prove the limits.",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit how this Mu Server 2.4.1 process handles SIGTERM. We need in-flight requests to drain and the stop boolean is confusing our deploy alert.",
+    "should_trigger": true
+  },
+  {
+    "query": "Which clients are still on HTTP/1.1 and TLS 1.2 in our Mu Server? Wire safe MuStats, SSLInfo, active connection, and rejection telemetry.",
+    "should_trigger": true
+  },
+  {
+    "query": "Use mu-acme to create a Let's Encrypt account, solve HTTP-01, renew the certificate automatically, and store the account key.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add CORS for https://app.example and CSRF protection to the browser forms served by Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure Murp to proxy /billing to an HTTPS upstream, rewrite the prefix, and turn target timeouts into 504 responses.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a new Mu Server GET /orders/{id} handler and implement the database lookup and JSON response.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade this application from mu-server 2.x to 3.x and fix its JAX-RS provider and URI behavior regressions.",
+    "should_trigger": false
+  },
+  {
+    "query": "In the mu-server library source, fix the HPACK parser integer overflow and add RFC 9113 conformance tests.",
+    "should_trigger": false
+  }
+]
