@@ -1,0 +1,58 @@
+[
+  {
+    "query": "Upgrade this app from io.muserver:mu-server 1.1.2 to 2.4.1 and fix the javax.ws.rs compile errors.",
+    "should_trigger": true
+  },
+  {
+    "query": "Move our Mu Server 2 service to version 3 and tell me which HTTP contracts need regression tests.",
+    "should_trigger": true
+  },
+  {
+    "query": "After updating muserver, our REST errors changed from HTML to problem JSON. Preserve the old API contract.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why did our reader interceptor order change after the Mu Server 3 upgrade?",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit this repo before bumping mu-server across two major versions.",
+    "should_trigger": true
+  },
+  {
+    "query": "The app sees refused HTTP/2 streams after moving from mu-server 2.2.8 to 2.4.1.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our shutdown success check inverted after updating MuServer. Diagnose and fix it.",
+    "should_trigger": true
+  },
+  {
+    "query": "Replace the old javax Jackson JAX-RS provider while upgrading this muserver service.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a new mu-server Maven app with a hello handler and static index page.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add another Jakarta REST singleton resource to my existing Mu Server app.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade Netty inside the mu-server library source and run its protocol tests.",
+    "should_trigger": false
+  },
+  {
+    "query": "Move this Jersey application from javax.ws.rs to jakarta.ws.rs on Tomcat.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade our Spring Boot application from Java 17 to Java 21.",
+    "should_trigger": false
+  },
+  {
+    "query": "Summarize the latest Netty security advisories without changing an application.",
+    "should_trigger": false
+  }
+]

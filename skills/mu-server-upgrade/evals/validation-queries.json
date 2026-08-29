@@ -1,0 +1,42 @@
+[
+  {
+    "query": "Bump muserver from 1.x to 3 and handle both major migration boundaries without rewriting the service.",
+    "should_trigger": true
+  },
+  {
+    "query": "This ResourceClass old JAX-RS implementation error appeared after our Mu Server 2 upgrade; find the stale dependency.",
+    "should_trigger": true
+  },
+  {
+    "query": "Check whether our SLF4J binding and Java target are ready for Mu Server 3.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review the exact cookie, Location, and URI encoding changes before we update Mu Server.",
+    "should_trigger": true
+  },
+  {
+    "query": "We bumped io.muserver:mu-server and a previously matching @Consumes route stopped working. Investigate the version boundary.",
+    "should_trigger": true
+  },
+  {
+    "query": "Explain how MuServerBuilder.withHttpPort works in the current release.",
+    "should_trigger": false
+  },
+  {
+    "query": "Implement RFC 9457 problem details in this Jersey API.",
+    "should_trigger": false
+  },
+  {
+    "query": "Change HTTP/2 frame parsing inside mu-server itself.",
+    "should_trigger": false
+  },
+  {
+    "query": "Update the Gradle wrapper and all test dependencies in this unrelated Java repository.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add CORS to these existing mu-server Jakarta REST endpoints.",
+    "should_trigger": false
+  }
+]

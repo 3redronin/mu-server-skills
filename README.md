@@ -1,6 +1,6 @@
 # mu-server agent skills
 
-Give your coding agent practical guidance for building Java applications with [mu-server](https://muserver.io/). The skills help an agent choose the right dependencies, create handlers and resources, preserve existing project conventions, and verify the result.
+Give your coding agent practical guidance for building and upgrading Java applications with [mu-server](https://muserver.io/). The skills help an agent choose the right dependencies, create handlers and resources, navigate version changes, preserve existing project conventions, and verify the result.
 
 ## Install
 
@@ -39,12 +39,15 @@ Plugin marketplaces and installation commands are still host-specific. Until thi
 
 - `mu-server-get-started` creates or adapts a Maven or Gradle application with a direct handler and static resources, then verifies it over HTTP.
 - `mu-server-jaxrs` creates Jakarta REST APIs with application-owned singleton resources and explicit provider registration.
+- `mu-server-upgrade` upgrades application dependencies across Mu Server versions, with focused guidance for the 1.x-to-2.x and 2.x-to-3.x boundaries.
 
 After installation, ask your agent naturally, for example:
 
 > Create a small Maven application with mu-server, a `/hello` route, and an index page.
 
 > Add a Jakarta REST resource to this existing mu-server application and test it over HTTP.
+
+> Upgrade this application from Mu Server 2 to 3 and preserve its HTTP contracts.
 
 The agent can select the matching skill automatically; supported harnesses also let you select a skill explicitly.
 

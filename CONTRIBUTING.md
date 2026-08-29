@@ -16,6 +16,10 @@ skills/
     SKILL.md
     references/
     evals/
+  mu-server-upgrade/
+    SKILL.md
+    references/
+    evals/
 .codex-plugin/plugin.json
 .claude-plugin/plugin.json
 ```

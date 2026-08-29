@@ -1,0 +1,47 @@
+{
+  "skill_name": "mu-server-upgrade",
+  "evals": [
+    {
+      "id": "upgrade-1-to-2-jaxrs",
+      "prompt": "Upgrade this Maven application from mu-server 1.1.2 to 2.4.1. Keep Java 11, its package, port 8187, direct MuServerBuilder startup, singleton resource, and GET /api/message behavior. Migrate its JAX-RS and Jackson integration completely, build it, and verify the JSON response over HTTP. Do not introduce a second REST implementation or dependency-injection framework.",
+      "expected_output": "The existing application runs on mu-server 2.4.1 with a complete javax.ws.rs-to-jakarta.ws.rs migration, a Jakarta-compatible explicitly registered Jackson provider, preserved architecture and HTTP behavior, and no old JAX-RS API left in the resolved application.",
+      "files": [
+        "evals/files/upgrade-1-to-2-jaxrs"
+      ],
+      "assertions": [
+        "The project builds on Java 11 with io.muserver:mu-server 2.4.1 and preserves port 8187 and the existing direct singleton RestHandlerBuilder architecture.",
+        "All source and build references to javax.ws.rs, javax.ws.rs-api, com.fasterxml.jackson.jaxrs, and jackson-jaxrs-json-provider are removed.",
+        "The resource, media types, and provider use jakarta.ws.rs-compatible imports and a Jakarta-compatible Jackson JSON provider registered as both reader and writer.",
+        "GET /api/message returns status 200, Content-Type application/json, and the same JSON fields and values as before the upgrade.",
+        "The resolved dependency graph does not contain both javax.ws.rs and jakarta.ws.rs APIs, and no alternate JAX-RS implementation or DI framework is added."
+      ]
+    },
+    {
+      "id": "review-2-to-3-contracts",
+      "prompt": "Plan the upgrade of a production mu-server 2.4.1 service to Mu Server 3. It currently runs Java 8 with an SLF4J 1.7 binding, explicitly registered singleton JAX-RS resources and a custom JSON provider, expects unhandled resource failures to be HTML, orders reader interceptors by addReaderInterceptor calls, treats false from MuServer.stop as success, signs raw request paths containing plus signs, and returns relative Location values. Give me the smallest safe migration and a focused verification plan; keep direct MuServerBuilder startup unless version 3 actually requires replacing it.",
+      "expected_output": "A concise platform and behavior migration that keeps supported architecture, updates Java and logging, and turns each named version-sensitive contract into a concrete decision and observable test.",
+      "files": [],
+      "assertions": [
+        "The plan raises Java to at least 11, updates the SLF4J 1.7 binding to a version 2 provider, and notes Jakarta REST 3.1 and JSpecify without changing io.muserver coordinates or package names.",
+        "It preserves direct MuServerBuilder and explicit singleton RestHandlerBuilder registration and does not introduce Application, SeBootstrap, scanning, per-request resources, or injection without a requirement.",
+        "It explains the default Throwable problem-details mapper and gives an intentional choice between the new JSON contract, configuration, or removing it to preserve HTML.",
+        "It replaces addition-order assumptions with explicit @Priority semantics and tests provider/interceptor selection through observable request behavior.",
+        "It corrects the meaning of MuServer.stop results and tests clean completion and timeout.",
+        "It identifies plus-sign/path encoding and relative Location resolution as wire-level changes and calls for exact raw-path, signature, status, and Location assertions. It explains that resolving against the application base is not necessarily conversion to a fully absolute URI.",
+        "Any provider-registration code uses the actual RestHandlerBuilder contract-specific methods, such as addCustomReader and addCustomWriter, rather than a generic addProvider method."
+      ]
+    },
+    {
+      "id": "diagnose-http2-minor-upgrade",
+      "prompt": "We upgraded a high-throughput HTTP/2 gateway from mu-server 2.2.8 to 2.4.1. Clients multiplex about 500 requests on one connection, and now some streams are refused. Find the relevant changelog change, explain why the version bump exposed it, make the smallest configuration recommendation, and describe a load test that proves the chosen limit. Do not propose changing clients or adding servers unless the Mu Server setting is insufficient.",
+      "expected_output": "A diagnosis connecting the regression to the 2.2.10 maximum-concurrent-streams change and the configurable 2.3.2 API, with an intentional Http2ConfigBuilder limit and a single-connection concurrency test.",
+      "files": [],
+      "assertions": [
+        "The diagnosis identifies 2.2.10 as changing the HTTP/2 per-connection concurrent-stream limit from unlimited to 100 and notes that 2.3.2 made it configurable with a default of 200.",
+        "It recommends Http2ConfigBuilder.withMaxConcurrentStreams with a value chosen from measured application capacity, including at least 500 only if the server can safely sustain that concurrency.",
+        "The test uses one HTTP/2 connection, exceeds and approaches the configured stream limit, records accepted and refused streams, and checks latency, errors, and resource saturation.",
+        "It keeps the change focused on Mu Server configuration and does not assume horizontal scaling or client rewrites are required."
+      ]
+    }
+  ]
+}
