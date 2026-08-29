@@ -1,0 +1,47 @@
+{
+  "skill_name": "mu-server-browser-security",
+  "evals": [
+    {
+      "id": "direct-credentialed-spa-api",
+      "prompt": "Our Java 17 service embeds Mu Server 3 on explicit port 8181. Direct handlers under /api serve a browser SPA at https://app.example.com using a Secure HttpOnly session cookie. Implement CORS for that one origin with credentialed GET/POST and Content-Type/X-CSRF-Token, expose X-Request-ID, and add CSRF protection plus a small browser-header middleware. Keep the existing route authorization and dependencies. Add wire and browser-focused tests, including unsupported preflights and the fact that curl is not constrained by CORS.",
+      "expected_output": "A narrowly scoped, ordered direct-handler implementation with exact-origin credentialed CORS, a terminal preflight path, independent method/auth enforcement, CSRF and cookie policy, tailored response headers, and observable tests.",
+      "files": [],
+      "assertions": [
+        "The result preserves Java, Mu major, port, routes, dependencies, and authorization, and uses CORSConfigBuilder/CORSHandlerBuilder before the covered direct API handlers.",
+        "CORS uses the exact https://app.example.com origin, credentials, the requested allowed/exposed headers and justified max-age; it explains that Mu echoes Origin, always adds Vary: Origin when CORS runs, and that browser credentials/cookie policy are separate.",
+        "The design accounts for the direct CORS handler returning false: a scoped later handler terminates OPTIONS, while route matching and authorization—not advertised methods—reject unsupported or unauthorized operations.",
+        "CSRF runs before protected state changes, its rejection is terminal, and the result addresses Mu allowing missing browser headers and treating same-site differently from same-origin.",
+        "The session cookie has explicit host-only scope, Path, Secure, HttpOnly and SameSite policy, with login rotation and logout invalidation; it does not rely on CORS as CSRF or authentication.",
+        "Tests cover allowed/disallowed/no Origin, exact preflight fields and status, unsupported method/header behavior, the CSRF decision branches, forged raw HTTP, and final browser-security headers without claiming curl proves browser enforcement."
+      ]
+    },
+    {
+      "id": "jaxrs-admin-behind-proxy",
+      "prompt": "Review and repair browser security for a Mu Server 2.4.1 Java 11 admin app behind nginx. Its JAX-RS resources use cookie auth and should be callable only from https://admin.example.net. nginx terminates TLS and sends Forwarded headers. The app currently adds CORS after restHandler, trusts request.uri() for CSRF, creates cookies with newCookie(), and returns a copied CSP on only successful pages. Keep Mu 2.4.1. Give us exact code placement and integration tests through nginx and attempted direct access.",
+      "expected_output": "A Mu 2.4.1-compatible JAX-RS and ingress-boundary correction using withCORS, early authority/CSRF/header placement, secure scoped cookies, tailored security policy, and proxy-path tests.",
+      "files": [],
+      "assertions": [
+        "The result keeps Java 11 and Mu 2.4.1 and places JAX-RS-only CORS on RestHandlerBuilder.withCORS rather than after a terminal Rest handler.",
+        "It uses the exact admin origin and explains that JAX-RS derives allowed methods and terminates generated OPTIONS while configured allowed request headers are advertised for browser evaluation.",
+        "The proxy design restricts direct listener access, strips inbound forwarding fields, validates the immediate peer and public authority before CSRF, and tests spoofed Host/Forwarded values through both paths.",
+        "It states Mu's exact CSRF compatibility behavior, including missing headers allowed, safe methods, exact raw bypass paths, default 400, and custom rejection return semantics, then adds an appropriate token or client policy for high assurance.",
+        "Cookies use newSecureCookie or equivalently explicit Secure/HttpOnly/SameSite attributes, no Domain unless justified, an explicit Path, rotation and correctly scoped deletion.",
+        "CSP and companion headers are tailored and applied before success/error/redirect responses; HSTS remains with nginx/production ownership and any COOP/COEP/CORP policy is enabled only for an evidenced requirement."
+      ]
+    },
+    {
+      "id": "audit-permissive-browser-controls",
+      "prompt": "Audit this browser-facing Mu Server 3 configuration. It uses withAllOriginsAllowed().withAllowCredentials(true), origin regex `https://.*example.com`, a direct CORS handler advertising every method, CSRF addBypassPath('/api') with a custom rejection handler that writes 403 but returns false, and session cookies from newCookie() with no Path. A global middleware sets CSP `default-src * 'unsafe-inline'`, X-Frame-Options ALLOW-FROM, and COOP/COEP on every page. Explain each observable failure, propose a minimal safe replacement, and specify regression tests.",
+      "expected_output": "A source-accurate review distinguishing Mu behavior from standards and recommendations, with an exact-origin policy, terminal CSRF rejection, scoped cookies, tailored headers, and tests that expose fallthrough and route-enforcement boundaries.",
+      "files": [],
+      "assertions": [
+        "The audit explains that Mu echoes every Origin when all origins are allowed, so credentials make the policy universally credentialed, and identifies the unescaped-dot and overbroad regex lookalike risk while accounting for Java matches() full-match semantics.",
+        "It explains that the direct CORS handler writes headers and returns false, that default/empty allowed methods advertise all except TRACE/CONNECT plus derived HEAD/OPTIONS, and that this neither implements nor enforces routes.",
+        "It notes that /api is only an exact raw-path CSRF bypass rather than a subtree rule, and that a custom rejection handler returning false permits the downstream state-changing handler despite writing 403.",
+        "It records the built-in handler's browser-defense boundary, including missing Origin/Fetch Metadata allowed and effective-authority trust, rather than claiming CSRF or CORS stops arbitrary clients.",
+        "It identifies newCookie defaults (insecure, script-readable, SameSite=None, no Domain/Path), explains browser-derived default Path, and replaces it with explicit host-only secure cookie lifecycle settings.",
+        "The replacement tailors CSP, uses frame-ancestors with compatible DENY or SAMEORIGIN instead of ALLOW-FROM, keeps nosniff/referrer/permissions policy deliberate, and removes cross-origin isolation unless tested application requirements justify it."
+      ]
+    }
+  ]
+}

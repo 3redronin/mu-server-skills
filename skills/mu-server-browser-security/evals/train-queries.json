@@ -1,0 +1,50 @@
+[
+  {
+    "query": "Our React app on app.example can't call the Mu Server API with its session cookie. Configure exact-origin credentialed CORS and preflight without opening every route.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add CSRFProtectionHandlerBuilder ahead of these muserver form handlers and test Sec-Fetch-Site, Origin, missing headers, and a custom 403.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why did my Mu CSRF rejection handler write 403 and then the POST still update the database? Please review the handler chain.",
+    "should_trigger": true
+  },
+  {
+    "query": "Harden our io.muserver login cookie: host-only scope, SameSite, rotation on login, and deletion that actually removes the original cookie.",
+    "should_trigger": true
+  },
+  {
+    "query": "Put a realistic CSP, framing, nosniff, referrer and permissions policy on this browser UI served by Mu without breaking its payment iframe.",
+    "should_trigger": true
+  },
+  {
+    "query": "muserver is behind nginx and a spoofed Forwarded Host changes whether an unsafe Origin is accepted. Fix the CSRF trust boundary.",
+    "should_trigger": true
+  },
+  {
+    "query": "Configure the PKCS12 certificate, mandatory client certs, HSTS redirect and HTTP/2 listener for our production Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a JWT verification handler for Mu Server and map missing Bearer tokens to a WWW-Authenticate 401 response.",
+    "should_trigger": false
+  },
+  {
+    "query": "Host versioned JavaScript and CSS from a WebJar with Mu's resource handler, correct MIME types, cache control and ranges.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade this entire app from mu-server 2.4.1 to 3 and fix Jakarta provider, UriInfo, request parsing and response compatibility.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure CORS and SameSite cookies in our Node.js Express gateway; it does not run Mu Server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix Mu Server's HTTP/2 parser so malformed pseudo-headers are rejected according to RFC 9113.",
+    "should_trigger": false
+  }
+]

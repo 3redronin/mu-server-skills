@@ -1,0 +1,34 @@
+[
+  {
+    "query": "Can this Mu Server CORS handler answer OPTIONS by itself? My preflight has allow headers but ends up 404 and POST authorization is unrelated.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review RestHandlerBuilder.withCORS for our cookie-authenticated JAX-RS SPA, including Vary Origin and disallowed origins.",
+    "should_trigger": true
+  },
+  {
+    "query": "curl without Origin gets through CSRFProtectionHandler but Chrome cross-site POST gets 400—is that expected, and do we need tokens too?",
+    "should_trigger": true
+  },
+  {
+    "query": "Add Secure HttpOnly SameSite cookies and browser response security headers to this embedded io.muserver admin console.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set body, URL and header size limits and a bounded executor for an internet-facing Mu Server deployment.",
+    "should_trigger": false
+  },
+  {
+    "query": "Implement multipart upload handling with request.uploadedFile, safe filenames, quotas and cleanup.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create an OpenAPI document from our Jakarta REST annotations and serve Swagger UI through the new WebJar handler.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a WebSocket endpoint with subprotocol negotiation, fragmented messages, bounded outbound queues and valid close frames.",
+    "should_trigger": false
+  }
+]
