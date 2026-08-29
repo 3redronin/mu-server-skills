@@ -78,6 +78,89 @@ The helper also disables automatic redirect following, so target redirects are r
 
 `withTotalTimeout(...)` covers the full exchange, including body streaming, and defaults to five minutes. The HTTP client controls connection establishment timeout. DNS and lower-level connection behavior depend on the JDK and platform; Murp does not expose a separate idle-timeout setting.
 
+## Handle client certificates on both TLS legs
+
+A Murp deployment can have two independent mutual-TLS relationships:
+
+| TLS connection | Client certificate presented by | Configuration point |
+| --- | --- | --- |
+| External client to Mu Server | The external client | Mu Server's `HttpsConfigBuilder` |
+| Murp to an HTTPS target | The proxy application | The JDK `HttpClient` supplied with `withHttpClient(...)` |
+
+Murp terminates the first TLS connection and creates the second. It cannot pass the original TLS session through, and the proxy never receives the external client's private key. Give the proxy its own client certificate when the target requires mTLS.
+
+### Authenticate clients at the Mu Server listener
+
+Load the CA certificates that may issue client identities into a `TrustManager`, following the [Mu Server client-certificate guide](https://muserver.io/client-certs), and attach it to the server's existing HTTPS configuration.
+
+Mu Server 3 makes the handshake policy explicit:
+
+```java
+HttpsConfigBuilder httpsConfig = existingServerHttpsConfig
+    .withClientCertificateTrustManager(partnerTrustManager)
+    .withClientCertificateAuthentication(
+        ClientCertificateAuthentication.MANDATORY);
+
+MuServer server = MuServerBuilder.httpsServer()
+    .withHttpsPort(8443)
+    .withHttpsConfig(httpsConfig)
+    .addHandler(proxy)
+    .start();
+```
+
+Use `MANDATORY` when every client must present a trusted certificate: a missing or untrusted certificate fails the TLS handshake before a request reaches Murp. Use `OPTIONAL` only when the same listener intentionally serves clients with and without certificates; a presented but untrusted certificate is still rejected. `NONE` does not request a certificate. Merely setting `withClientCertificateTrustManager(...)` without an explicit mode remains optional for compatibility.
+
+This example assumes Mu Server builds the server-side `SSLContext` from the builder's key-store or key-manager configuration. If the application uses `withSSLContext(...)`, initialize that context with the client-certificate trust managers itself; `withClientCertificateTrustManager(...)` does not replace trust managers embedded in a supplied context. In Mu Server 3, set `MANDATORY` or `OPTIONAL` explicitly. In Mu Server 2.x, a non-null builder trust-manager setting enables optional client authentication while the supplied context's embedded trust managers perform the validation.
+
+Mu Server 2.x has no explicit authentication-mode method. Setting `withClientCertificateTrustManager(...)` requests client certificates optionally. If a Mu Server 2.x route requires a certificate, place a handler before Murp that checks `request.connection().clientCertificate()`, returns an application-appropriate denial such as `403` when it is empty, and otherwise returns `false` so Murp runs. This rejects the HTTP request rather than rejecting the TLS handshake.
+
+`request.connection().clientCertificate()` exposes the first peer certificate as an `Optional<Certificate>`. Cast it to `X509Certificate` only after checking its type. Trust validation authenticates that the certificate satisfies the configured trust manager; it does not decide whether that identity may use a particular route. Perform application authorization against stable, application-owned identity rules such as an allowlisted SAN or certificate fingerprint. Keep CA keys, trust stores, client keys, passwords, certificate contents, and derived identities out of logs.
+
+### Present the proxy's certificate to an mTLS target
+
+Initialize the target client's `SSLContext` with both key managers for the proxy identity and trust managers that validate the target. Load the key stores and passwords from the application's secret-management mechanism rather than embedding them in source:
+
+```java
+KeyManagerFactory proxyIdentity = KeyManagerFactory.getInstance(
+    KeyManagerFactory.getDefaultAlgorithm());
+proxyIdentity.init(proxyClientKeyStore, proxyClientKeyPassword);
+
+TrustManagerFactory targetTrust = TrustManagerFactory.getInstance(
+    TrustManagerFactory.getDefaultAlgorithm());
+targetTrust.init(targetTrustStore); // use null here only to select the JDK's default roots
+
+SSLContext targetTls = SSLContext.getInstance("TLS");
+targetTls.init(
+    proxyIdentity.getKeyManagers(),
+    targetTrust.getTrustManagers(),
+    null);
+
+HttpClient targetClient = ReverseProxyBuilder.createHttpClientBuilder(false)
+    .sslContext(targetTls)
+    .connectTimeout(Duration.ofSeconds(5))
+    .build();
+
+ReverseProxyBuilder proxy = ReverseProxyBuilder.reverseProxy()
+    .withUriMapper(UriMapper.toDomain(URI.create("https://service.internal")))
+    .withHttpClient(targetClient)
+    .withTotalTimeout(30, TimeUnit.SECONDS);
+```
+
+The identity key store must contain the proxy's private key and certificate chain. The target trust store must contain suitable trust anchors for the target server; it is a different role from the partner CA trust used on the public listener. Supplying a custom `SSLContext` makes its trust managers responsible for target validation. Retain JDK hostname verification and do not substitute a trust-all manager.
+
+### Forward an authenticated downstream identity only when needed
+
+The HTTPS target sees the proxy's mTLS certificate, not the external client's certificate. If it also needs the external identity, authorize that certificate in a handler before Murp, store a minimal derived identity in a request attribute, and overwrite an application-specific header in the request interceptor:
+
+```java
+.withRequestInterceptor((clientRequest, targetRequest) ->
+    targetRequest.setHeader(
+        "X-Authenticated-Partner",
+        (String) clientRequest.attribute("authenticated-partner")))
+```
+
+`setHeader(...)` replaces any caller-supplied value already copied by Murp; `header(...)` would append and could leave a spoofed value. Ensure the attribute can only be set after successful authentication and authorization, and ensure the target accepts this header only from the authenticated proxy or a protected network path. Prefer a short opaque identity over forwarding an entire certificate. If a certificate must be forwarded, define its encoding and size limit, treat it as sensitive data, and test duplicate and oversized inputs.
+
 ## Set forwarding and Host policy
 
 Murp filters standard hop-by-hop headers and names listed by a `Connection` header in both directions. It appends `Via` and an RFC 7239 `Forwarded` element. Choose a meaningful `withViaName(...)`; its default is `private`.

@@ -24,6 +24,14 @@
     "should_trigger": true
   },
   {
+    "query": "Require partner client certificates on our public Murp listener and forward the authenticated identity safely.",
+    "should_trigger": true
+  },
+  {
+    "query": "Make Murp present its own client certificate to an mTLS upstream.",
+    "should_trigger": true
+  },
+  {
     "query": "Add request and response interceptors to our Mu reverse proxy.",
     "should_trigger": true
   },

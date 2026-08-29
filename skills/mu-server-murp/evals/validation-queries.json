@@ -20,6 +20,14 @@
     "should_trigger": true
   },
   {
+    "query": "Configure mandatory downstream mTLS and a separate upstream client identity for this Mu Server Murp proxy.",
+    "should_trigger": true
+  },
+  {
+    "query": "Stop callers spoofing the authenticated client-certificate identity header sent through Murp.",
+    "should_trigger": true
+  },
+  {
     "query": "Add OpenAPI JSON to this Mu Server JAX-RS application.",
     "should_trigger": false
   },

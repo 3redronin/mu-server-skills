@@ -42,6 +42,20 @@
         "It proposes observable tests for reusable HTTP/1.1 connections and HTTP/2 stream failure without unnecessarily destroying the whole HTTP/2 connection.",
         "It states that request and response interceptors can change headers or pre-send status but cannot inspect or replace streamed bodies, while ProxyListener and completion listeners provide observation callbacks."
       ]
+    },
+    {
+      "id": "configure-mutual-tls-both-legs",
+      "prompt": "Configure a Mu Server 3 Murp edge proxy with two independent mTLS requirements. External partners must present certificates issued by our partner CA to the public listener. The HTTPS target at https://orders.internal requires the proxy to present its own client certificate and is signed by our internal target CA. The target also needs a short authenticated partner ID, but callers can send their own X-Authenticated-Partner header. Explain the trust and identity boundary, show focused configuration for both TLS legs and safe identity propagation, and give a verification plan. Do not put keys or passwords in source.",
+      "expected_output": "A two-leg mTLS design that requires and authorizes downstream certificates at Mu Server, gives the proxy a separate client identity while validating the target, and overwrites any spoofable identity header before forwarding.",
+      "files": [],
+      "assertions": [
+        "It clearly separates external-client-to-Mu TLS from Murp-to-target TLS and states that the original TLS session or downstream private key cannot be passed through.",
+        "It configures the Mu Server 3 HttpsConfigBuilder with the partner CA trust manager and ClientCertificateAuthentication.MANDATORY, and obtains the presented certificate from request.connection().clientCertificate().",
+        "It distinguishes certificate trust validation from application authorization and authorizes a stable certificate identity before Murp handles the request.",
+        "It builds a target SSLContext with key managers for the proxy's own private key and certificate chain plus trust managers that validate the internal target CA, then supplies that context on a non-trust-all HttpClient to withHttpClient.",
+        "It overwrites X-Authenticated-Partner with HttpRequest.Builder.setHeader after deriving the value from the authorized certificate, and explains why appending or trusting the incoming value permits spoofing.",
+        "It keeps private keys and passwords out of source and logs, retains target hostname verification, and verifies missing, trusted, and untrusted certificates on each TLS leg plus a spoofed identity header."
+      ]
     }
   ]
 }
