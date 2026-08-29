@@ -11,7 +11,7 @@ Read this reference when the project targets Mu Server 3, remains on 2.4.1, or i
 
 ## Direct WebSocket behavior
 
-A comparison of tag `mu-server-2.4.1` with current master found no intentional behavior change in `WebSocketHandlerBuilder`, `WebSocketHandler`, `MuWebSocket`, `BaseWebSocket`, `MuWebSocketFactory`, `MuWebSocketSession`, or `MuWebSocketSessionImpl`. The current line adds JSpecify nullness annotations and related null-safe source cleanup:
+A comparison of tag `mu-server-2.4.1` with the Mu Server 3 source line found no intentional behavior change in `WebSocketHandlerBuilder`, `WebSocketHandler`, `MuWebSocket`, `BaseWebSocket`, `MuWebSocketFactory`, `MuWebSocketSession`, or `MuWebSocketSessionImpl`. Mu Server 3 adds JSpecify nullness annotations and related null-safe source cleanup:
 
 - `MuWebSocketFactory.create` explicitly declares its fall-through `null` return nullable.
 - `withPath(null)` and the optional close reason are explicitly nullable.
@@ -23,4 +23,4 @@ The established behavior remains: HTTP/1.1 GET Upgrade only, exact relative-path
 
 Both versions wait for active HTTP requests rather than upgraded WebSockets, so applications should drain tracked WebSocket sessions before server shutdown.
 
-There is a separate 2.4.1 shutdown-result defect relevant to code that checks `MuServer.stop(duration, unit)`: its implementation returns `true` when HTTP requests remain after the grace period, opposite the public Javadoc. Current master returns `true` when the HTTP request drain completed and `false` when requests remained, and focused `StopTest` cases cover that contract. This does not add WebSocket draining in either line. Avoid using the 2.4.1 boolean as proof that WebSockets closed cleanly.
+There is a separate 2.4.1 shutdown-result defect relevant to code that checks `MuServer.stop(duration, unit)`: its implementation returns `true` when HTTP requests remain after the grace period, opposite the public Javadoc. Mu Server 3 returns `true` when the HTTP request drain completed and `false` when requests remained, and focused `StopTest` cases cover that contract. This does not add WebSocket draining in either line. Avoid using the 2.4.1 boolean as proof that WebSockets closed cleanly.

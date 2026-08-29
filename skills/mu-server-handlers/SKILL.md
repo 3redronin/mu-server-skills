@@ -7,7 +7,7 @@ license: MIT
 
 # Build direct Mu Server handlers
 
-Preserve the application's existing builder, dependency version, Java level, ports, handler order, and lifecycle unless the user asks to change them. Treat current `io.muserver:mu-server` master as released Mu Server 3; do not use the historical `io.muserver:mu3` prerelease artifact. For a 2.x application or migration, read [Mu Server 2.x and 3.x differences](references/version-differences.md) before changing observable behavior.
+Preserve the application's existing builder, dependency version, Java level, ports, handler order, and lifecycle unless the user asks to change them. Treat Mu Server 3 as released and keep the `io.muserver:mu-server` coordinates; the historical `io.muserver:mu3` artifact is unrelated. For a 2.x application or migration, read [Mu Server 2.x and 3.x differences](references/version-differences.md) before changing observable behavior.
 
 Use this skill for the synchronous direct-handler model. Route Jakarta REST resources to the JAX-RS skill, Murp mappings to the Murp skill, first-project/bootstrap and static-resource work to the get-started skill, and `handleAsync()`, asynchronous body readers, SSE, WebSockets, or long-running non-blocking streams to their specialized guidance.
 

@@ -7,7 +7,7 @@ license: MIT
 
 # Test Mu Server applications
 
-Preserve the project's test framework, HTTP client, Java level, Mu Server dependency, and build commands unless the user asks to change them. Treat current `io.muserver:mu-server` master as released Mu Server 3; the historical `io.muserver:mu3` artifact is unrelated. For a 2.x suite or an upgrade, read [version-sensitive contracts](references/version-differences.md).
+Preserve the project's test framework, HTTP client, Java level, Mu Server dependency, and build commands unless the user asks to change them. Treat Mu Server 3 as released and keep the `io.muserver:mu-server` coordinates; the historical `io.muserver:mu3` artifact is unrelated. For a 2.x suite or an upgrade, read [version-sensitive contracts](references/version-differences.md).
 
 ## Start at the public boundary
 
