@@ -7,7 +7,7 @@ Give your coding agent practical guidance for building Java applications with [m
 The easiest cross-agent option is the third-party [`skills` CLI](https://github.com/vercel-labs/skills). Run this from the project where you want to use the skills:
 
 ```bash
-npx skills add 3redronin/mu-server-agent-skills
+npx skills add 3redronin/mu-server-skills
 ```
 
 The installer discovers the skills in this repository and lets you choose which ones to add and which supported coding agent to target. Project installation is the default; add `--global` (or `-g`) to make them available across projects.
@@ -16,18 +16,18 @@ Useful variants:
 
 ```bash
 # See what is available without installing
-npx skills add 3redronin/mu-server-agent-skills --list
+npx skills add 3redronin/mu-server-skills --list
 
 # Install one skill
-npx skills add 3redronin/mu-server-agent-skills \
+npx skills add 3redronin/mu-server-skills \
   --skill mu-server-get-started
 
 # Install all skills globally
-npx skills add 3redronin/mu-server-agent-skills \
+npx skills add 3redronin/mu-server-skills \
   --skill '*' --global
 ```
 
-If your agent harness has its own Agent Skills installer, give it [this repository](https://github.com/3redronin/mu-server-agent-skills) or the URL of one skill under `skills/`. You can also install manually by copying a skill directory into the skills location documented by your harness. Each skill is self-contained and follows the [open Agent Skills format](https://agentskills.io/).
+If your agent harness has its own Agent Skills installer, give it [this repository](https://github.com/3redronin/mu-server-skills) or the URL of one skill under `skills/`. You can also install manually by copying a skill directory into the skills location documented by your harness. Each skill is self-contained and follows the [open Agent Skills format](https://agentskills.io/).
 
 ## Is this an agent plugin?
 
