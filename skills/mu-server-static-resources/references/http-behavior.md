@@ -36,16 +36,19 @@ These are defaults, not knowledge of the build pipeline. Override cache policy w
 `withResourceCustomizer` is invoked after Mu adds content type, `Accept-Ranges`, content length, last modified, and the selected type's headers, but before conditional and range processing. It can replace cache policy and add headers based on `request.relativePath()`:
 
 ```java
-.withResourceCustomizer((request, headers) -> {
-    headers.set(HeaderNames.X_CONTENT_TYPE_OPTIONS, "nosniff");
-    if (request.relativePath().matches(".*\\.[0-9a-f]{8,}\\.(js|css)$")) {
-        headers.set(HeaderNames.CACHE_CONTROL,
-            "public, max-age=31536000, immutable");
+.withResourceCustomizer(new ResourceCustomizer() {
+    @Override
+    public void beforeHeadersSent(MuRequest request, Headers headers) {
+        headers.set(HeaderNames.X_CONTENT_TYPE_OPTIONS, "nosniff");
+        if (request.relativePath().matches(".*\\.[0-9a-f]{8,}\\.(js|css)$")) {
+            headers.set(HeaderNames.CACHE_CONTROL,
+                "public, max-age=31536000, immutable");
+        }
     }
 })
 ```
 
-Use a predicate that matches the application's actual fingerprint convention; the regex is illustrative. The hook applies only to an existing regular resource. Put policy needed on redirects, listings, 404s, or all application responses in a separate earlier handler or trusted edge.
+`ResourceCustomizer` supplies a default method and is not a functional interface, so use an explicit implementation rather than a lambda. Use a predicate that matches the application's actual fingerprint convention; the regex is illustrative. The hook applies only to an existing regular resource. Put policy needed on redirects, listings, 404s, or all application responses in a separate earlier handler or trusted edge.
 
 Add `nosniff` wherever active content types must not be guessed. Set a tested Content Security Policy for HTML at the application or edge layer if the site requires one; it must match the site's real scripts, styles, frames, and connections rather than a generic copied value. Avoid changing `Content-Length`, `Content-Range`, `Last-Modified`, or `Accept-Ranges` in the customizer unless the application replaces the corresponding semantics.
 
