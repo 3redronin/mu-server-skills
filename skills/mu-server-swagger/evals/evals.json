@@ -1,0 +1,49 @@
+{
+  "skill_name": "mu-server-swagger",
+  "evals": [
+    {
+      "id": "add-annotation-driven-openapi",
+      "prompt": "Add annotation-driven OpenAPI documentation to this Maven Mu Server 2.4.1 application. Use mu-swagger 0.1.1 and Swagger Core's Jakarta integration 2.2.54. Preserve Java 21, port 8189, the existing direct MuServerBuilder startup, singleton resource, and GET /hello/{name} behavior. Document the operation, path parameter, and 200 response with io.swagger.v3.oas.annotations; set the API title to Greeting API and version to 1.0.0; expose and verify both JSON and YAML documents. Do not bundle a Swagger UI or add a JSON body provider that this plain-text API does not need.",
+      "expected_output": "The existing application runs unchanged with its singleton route, while mu-swagger generates parseable /openapi.json and /openapi.yaml documents containing the requested Swagger annotation metadata and API information.",
+      "files": [
+        "evals/files/add-annotation-driven-openapi"
+      ],
+      "assertions": [
+        "The project builds and runs on Java 21 with io.muserver:mu-server 2.4.1, io.muserver:mu-swagger 0.1.1, and io.swagger.core.v3:swagger-jaxrs2-jakarta 2.2.54.",
+        "The existing direct MuServerBuilder architecture, singleton GreetingResource instance, port 8189, and GET /hello/{name} plain-text behavior are preserved.",
+        "The same application resource collection is passed to RestHandlerBuilder and MuOpenApiResourceBuilder, and the built MuOpenApiResource is added to that REST handler.",
+        "The resource uses io.swagger.v3.oas.annotations for an operation summary, path-parameter description, and 200 response description; no legacy io.swagger.annotations or javax Swagger/JAX-RS artifact is introduced.",
+        "GET /openapi.json returns 200 application/json that parses and contains title Greeting API, version 1.0.0, /hello/{name}, the annotated summary and parameter, and the documented 200 response.",
+        "GET /openapi.yaml returns 200 application/yaml with the same intentional document content, and GET /hello/Daniel still returns 200 text/plain with Hello, Daniel.",
+        "No Swagger UI assets, UI dependency, dependency-injection framework, or unnecessary application JSON body provider is added."
+      ]
+    },
+    {
+      "id": "choose-built-in-for-ui-only",
+      "prompt": "Our Mu Server Jakarta REST service has no Swagger annotations and we only need an OpenAPI document that an existing Swagger UI can render. Should we add mu-swagger? Give the smallest direct RestHandlerBuilder configuration, explain UI and CORS responsibilities, and say when mu-swagger would become appropriate.",
+      "expected_output": "A recommendation to use Mu Server's built-in OpenAPI JSON for an annotation-free service, with Swagger UI kept separate and CORS enabled only for a genuinely cross-origin UI.",
+      "files": [],
+      "assertions": [
+        "It recommends Mu Server's built-in withOpenApiJsonUrl rather than adding mu-swagger or Swagger Core solely for a Swagger UI.",
+        "It shows the existing RestHandlerBuilder retaining the application's resources and adding an OpenAPI JSON URL; the optional Mu read-only HTML URL is distinguished from Swagger UI.",
+        "It explains that Swagger UI is separate and can consume the built-in JSON document.",
+        "It states that same-origin UI access needs no CORS and that a cross-origin UI should receive a narrowly scoped allowed origin and only required headers.",
+        "It notes that the built-in generator does not interpret Swagger Core annotations, so mu-swagger becomes appropriate if that requirement is later introduced."
+      ]
+    },
+    {
+      "id": "diagnose-ignored-swagger-annotations",
+      "prompt": "This Mu Server app exposes /openapi.json with RestHandlerBuilder.withOpenApiJsonUrl, but summaries from io.swagger.v3.oas.annotations.Operation never appear. We want to keep those Swagger Core annotations. Diagnose the cause and give the minimum migration to mu-swagger, including Java and dependency checks, resource registration, document endpoints, and verification. The application already has a separately hosted Swagger UI.",
+      "expected_output": "A diagnosis that Mu's built-in generator does not consume Swagger Core annotations, followed by a focused migration to the Java-compatible Jakarta mu-swagger integration without adding or confusing it with Swagger UI.",
+      "files": [],
+      "assertions": [
+        "It identifies the generator mismatch: withOpenApiJsonUrl is Mu Server's built-in generator and does not interpret io.swagger.v3.oas.annotations.",
+        "It checks the selected mu-swagger release's Java bytecode requirement and notes that version 0.1.1 requires Java 21.",
+        "It keeps the application's direct Mu Server dependency and adds exact compatible mu-swagger and swagger-jaxrs2-jakarta dependencies without switching to javax or legacy io.swagger.annotations.",
+        "It passes the same singleton resource instances to RestHandlerBuilder and MuOpenApiResourceBuilder, adds the resulting MuOpenApiResource, and avoids a duplicate built-in /openapi.json route.",
+        "It identifies /openapi.json and /openapi.yaml as generated-document endpoints and verifies status, media type, parseability, annotated content, and an unchanged application endpoint.",
+        "It does not add Swagger UI because the UI is already separate, and treats CORS, JSON body providers, and authentication as independent runtime concerns."
+      ]
+    }
+  ]
+}

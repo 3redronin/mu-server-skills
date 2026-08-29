@@ -1,0 +1,42 @@
+[
+  {
+    "query": "Use io.muserver:mu-swagger so @ApiResponse metadata appears in both OpenAPI formats.",
+    "should_trigger": true
+  },
+  {
+    "query": "Keep our Swagger v3 annotations while moving this API onto Mu Server.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add a Swagger @Parameter description to a muserver path parameter and verify the generated spec.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set Info title and version through MuOpenApiResourceBuilder.withOpenApi.",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit this mu-swagger setup for Jakarta dependencies and an accidental duplicate /openapi.json route.",
+    "should_trigger": true
+  },
+  {
+    "query": "Generate basic OpenAPI JSON from Mu REST annotations with no extra libraries.",
+    "should_trigger": false
+  },
+  {
+    "query": "Enable CORS for a frontend calling my Mu Server API.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a standalone Swagger UI Docker deployment for this existing spec URL.",
+    "should_trigger": false
+  },
+  {
+    "query": "Upgrade io.muserver:mu-server from version 2 to version 3.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add Jackson serialization to this Mu Server JAX-RS resource.",
+    "should_trigger": false
+  }
+]

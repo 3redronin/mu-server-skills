@@ -1,0 +1,58 @@
+[
+  {
+    "query": "Add mu-swagger to this Mu Server service and expose annotation-driven OpenAPI JSON and YAML.",
+    "should_trigger": true
+  },
+  {
+    "query": "Document these muserver JAX-RS endpoints with io.swagger.v3.oas.annotations.Operation and Schema.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why are our Swagger Core @Operation summaries missing from Mu Server's openapi.json?",
+    "should_trigger": true
+  },
+  {
+    "query": "Migrate this Mu API from its built-in docs to mu-swagger while preserving singleton resources.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add an OpenAPI security scheme using Swagger annotations to this Mu Server API.",
+    "should_trigger": true
+  },
+  {
+    "query": "Configure MuOpenApiResourceBuilder with API title and server metadata.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our mu-swagger application fails on Java 17 with an unsupported class version. Diagnose it.",
+    "should_trigger": true
+  },
+  {
+    "query": "Host two mu-swagger documents in one Mu Server process without sharing a Swagger context.",
+    "should_trigger": true
+  },
+  {
+    "query": "Expose Mu Server's built-in OpenAPI JSON for these JAX-RS resources.",
+    "should_trigger": false
+  },
+  {
+    "query": "Point our existing Swagger UI at the OpenAPI JSON this service already generates.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add Mu's @Description and io.muserver.rest.ApiResponse annotations to these routes.",
+    "should_trigger": false
+  },
+  {
+    "query": "Serve Swagger UI static assets from a generic Java HTTP server.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a Jakarta REST singleton resource to this Mu Server application.",
+    "should_trigger": false
+  },
+  {
+    "query": "Integrate Swagger Core annotations into a Jersey application on Tomcat.",
+    "should_trigger": false
+  }
+]

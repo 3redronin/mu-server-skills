@@ -143,6 +143,8 @@ RestHandlerBuilder api = RestHandlerBuilder.restHandler(resources)
 
 Use `withOpenApiDocument`, `addCustomSchema`, or `addSchemaObjectCustomizer` only when the requested schema needs more detail. Mu Server does not interpret Swagger annotations.
 
+The generated JSON can be rendered by a separately hosted Swagger UI. Add `mu-swagger` only when the application specifically needs Swagger Core v3 annotations such as `io.swagger.v3.oas.annotations.Operation`; a Swagger UI by itself does not require it.
+
 ## Security, uploads, async responses, and SSE
 
 - Security: register an application-created `ContainerRequestFilter`, such as Mu Server's `BasicAuthSecurityFilter`, with `addRequestFilter`. Use authentication over TLS and preserve the application's existing security model.

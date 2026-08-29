@@ -39,6 +39,7 @@ Plugin marketplaces and installation commands are still host-specific. Until thi
 
 - `mu-server-get-started` creates or adapts a Maven or Gradle application with a direct handler and static resources, then verifies it over HTTP.
 - `mu-server-jaxrs` creates Jakarta REST APIs with application-owned singleton resources and explicit provider registration.
+- `mu-server-swagger` generates OpenAPI JSON and YAML from Swagger Core v3 annotations, while directing annotation-free applications to Mu Server's built-in OpenAPI support.
 - `mu-server-upgrade` upgrades application dependencies across Mu Server versions, with focused guidance for the 1.x-to-2.x and 2.x-to-3.x boundaries.
 
 After installation, ask your agent naturally, for example:
@@ -46,6 +47,8 @@ After installation, ask your agent naturally, for example:
 > Create a small Maven application with mu-server, a `/hello` route, and an index page.
 
 > Add a Jakarta REST resource to this existing mu-server application and test it over HTTP.
+
+> Document these endpoints with Swagger `@Operation` and `@Schema` annotations.
 
 > Upgrade this application from Mu Server 2 to 3 and preserve its HTTP contracts.
 
