@@ -1,4 +1,5 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "mu-server-skills",
   "version": "1.0.1",
   "description": "Agent skills for building, testing, securing, upgrading, and operating Java applications with mu-server",

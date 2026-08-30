@@ -31,9 +31,9 @@ If your agent harness has its own Agent Skills installer, give it [this reposito
 
 ## Is this an agent plugin?
 
-Yes, in the broad sense: this is a **skills-only agent plugin**. It contains no MCP server, connector, or executable application. The reusable content is a provider-neutral collection of Agent Skills under `skills/`; `.codex-plugin/` and `.claude-plugin/` provide host-specific packaging metadata.
+Yes. This is a **skills-only agent plugin** using the provider-neutral [Agent Plugins](https://agent-plugins.org/) layout: `plugin.json` is the canonical manifest and the Agent Skills live under `skills/`. It contains no MCP server, connector, or executable application.
 
-Plugin marketplaces and installation commands are still host-specific. Until this repository is published through one of those marketplaces, installing the portable skills with `npx skills` or your harness's skill installer is the simplest option.
+The `.codex-plugin/` and `.claude-plugin/` manifests are compatibility metadata for host workflows that do not yet consume the standard root manifest. Plugin marketplaces and installation commands are still host-specific. Until this repository is published through one of those marketplaces, installing the portable skills with `npx skills` or your harness's skill installer is the simplest option.
 
 ## Included skills
 
